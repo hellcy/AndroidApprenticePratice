@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="au.com.unicard.tafenswwallet.ui.home.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_topup"
+        android:name="au.com.unicard.tafenswwallet.ui.topup.TopupFragment"
+        android:label="@string/title_topup"
+        tools:layout="@layout/fragment_topup" />
+
+    <fragment
+        android:id="@+id/navigation_transactions"
+        android:name="au.com.unicard.tafenswwallet.ui.transactions.TransactionsFragment"
+        android:label="@string/title_transactions"
+        tools:layout="@layout/fragment_transactions" />
+    <fragment
+        android:id="@+id/navigation_refund"
+        android:name="au.com.unicard.tafenswwallet.ui.refund.RefundFragment"
+        android:label="@string/title_refund"
+        tools:layout="@layout/fragment_refund" />
+</navigation>

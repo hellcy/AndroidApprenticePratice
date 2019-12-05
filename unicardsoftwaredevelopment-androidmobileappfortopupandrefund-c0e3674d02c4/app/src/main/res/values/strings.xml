@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">TAFENSWWallet</string>
+    <string name="title_home">Home</string>
+    <string name="title_topup">Top up</string>
+    <string name="title_transactions">Transactions</string>
+    <string name="title_refund">Refund</string>
+</resources>

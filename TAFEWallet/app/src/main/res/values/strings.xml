@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">TAFE Wallet</string>
+    <string name="title_home">Home</string>
+    <string name="title_topup">Topup</string>
+    <string name="title_history">History</string>
+    <string name="title_refund">Refund</string>
+</resources>

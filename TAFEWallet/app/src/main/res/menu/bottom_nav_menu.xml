@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/home2"
+        android:title="@string/title_home" />
+
+    <item
+        android:id="@+id/navigation_topup"
+        android:icon="@drawable/top_up"
+        android:title="@string/title_topup" />
+
+    <item
+        android:id="@+id/navigation_history"
+        android:icon="@drawable/view_history"
+        android:title="@string/title_history" />
+
+    <item
+        android:id="@+id/navigation_refund"
+        android:icon="@drawable/refund"
+        android:title="@string/title_refund" />
+
+</menu>
