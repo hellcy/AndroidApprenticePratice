@@ -22,9 +22,7 @@ class TopupFragment : Fragment() {
         topupViewModel =
             ViewModelProviders.of(this).get(TopupViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_topup, container, false)
-        val textView: TextView = root.findViewById(R.id.text_topup)
         topupViewModel.text.observe(this, Observer {
-            textView.text = it
         })
         return root
     }

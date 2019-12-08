@@ -22,9 +22,7 @@ class RefundFragment : Fragment() {
         refundViewModel =
             ViewModelProviders.of(this).get(RefundViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_refund, container, false)
-        val textView: TextView = root.findViewById(R.id.text_refund)
         refundViewModel.text.observe(this, Observer {
-            textView.text = it
         })
         return root
     }
