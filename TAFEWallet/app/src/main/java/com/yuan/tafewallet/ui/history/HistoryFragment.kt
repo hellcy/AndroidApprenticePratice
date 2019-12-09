@@ -19,11 +19,8 @@ class HistoryFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        historyViewModel =
-            ViewModelProviders.of(this).get(HistoryViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_history, container, false)
-        historyViewModel.text.observe(this, Observer {
-        })
+
         return root
     }
 }

@@ -19,11 +19,8 @@ class RefundFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        refundViewModel =
-            ViewModelProviders.of(this).get(RefundViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_refund, container, false)
-        refundViewModel.text.observe(this, Observer {
-        })
+
         return root
     }
 }

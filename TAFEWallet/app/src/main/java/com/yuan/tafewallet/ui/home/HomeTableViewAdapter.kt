@@ -6,18 +6,18 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.yuan.tafewallet.R
 
-class homeTableViewAdapter : RecyclerView.Adapter<homeTableViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): homeTableViewHolder {
+class HomeTableViewAdapter : RecyclerView.Adapter<HomeTableViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeTableViewHolder {
         val view = LayoutInflater.from(parent?.context).inflate(R.layout.home_table_view_holder, parent, false)
 
-        return homeTableViewHolder(view)
+        return HomeTableViewHolder(view)
     }
 
     override fun getItemCount(): Int {
         return 2
     }
 
-    override fun onBindViewHolder(holder: homeTableViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: HomeTableViewHolder, position: Int) {
         if (holder != null) {
             when (position) {
                 0 -> {
