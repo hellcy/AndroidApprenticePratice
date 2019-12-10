@@ -7,12 +7,17 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import com.yuan.tafewallet.ui.history.HistoryFragment
-import com.yuan.tafewallet.ui.home.HomeFragment
-import com.yuan.tafewallet.ui.refund.RefundFragment
-import com.yuan.tafewallet.ui.topup.TopupFragment
+import com.yuan.tafewallet.history.HistoryFragment
+import com.yuan.tafewallet.home.HomeFragment
+import com.yuan.tafewallet.models.WestpacAccount
+import com.yuan.tafewallet.refund.RefundFragment
+import com.yuan.tafewallet.topup.TopupFragment
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        var westpacAccounts = listOf<WestpacAccount>()
+
+    }
     private var navController: FrameLayout? = null
 
     private lateinit var homeFragment: HomeFragment
@@ -49,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         supportActionBar?.hide()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         navController = findViewById(R.id.nav_host_fragment)
 
@@ -62,6 +68,21 @@ class MainActivity : AppCompatActivity() {
 
 
         setFragment(homeFragment)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        supportActionBar?.hide()
     }
 
     private fun setFragment(fragment: Fragment) {

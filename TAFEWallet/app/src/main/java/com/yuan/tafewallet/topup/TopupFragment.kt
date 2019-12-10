@@ -1,43 +1,41 @@
-package com.yuan.tafewallet.ui.topup
+package com.yuan.tafewallet.topup
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
+import com.yuan.tafewallet.adapters.TopupSelectAccountTableViewAdapter
 import com.yuan.tafewallet.models.Account
+import kotlinx.android.synthetic.main.fragment_topup.view.*
 
 class TopupFragment : Fragment(), TopupSelectAccountTableViewAdapter.TopupSelectAccountTableViewClickListener {
 
-    private lateinit var topupViewModel: TopupViewModel
     lateinit var tableView: RecyclerView
 
+
+    // initialize all elements here
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_topup, container, false)
+        activity?.actionBar?.hide()
 
-        return root
+        val view = inflater.inflate(R.layout.fragment_topup, container, false)
+        view.TopUpAccountTable.adapter = TopupSelectAccountTableViewAdapter(this)
+        view.TopUpAccountTable.layoutManager = LinearLayoutManager(activity)
+        return view
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onStart() {
+        super.onStart()
+        activity?.actionBar?.hide()
 
-        view?.let {
-            tableView = it.findViewById(R.id.TopUpAccountTable)
-            tableView.layoutManager = LinearLayoutManager(activity)
-            tableView.adapter = TopupSelectAccountTableViewAdapter(this)
-
-        }
     }
 
     override fun listItemClicked(account: Account) {
