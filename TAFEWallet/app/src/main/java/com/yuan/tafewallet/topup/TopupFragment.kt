@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,28 +15,21 @@ import com.yuan.tafewallet.models.Account
 import kotlinx.android.synthetic.main.fragment_topup.view.*
 
 class TopupFragment : Fragment(), TopupSelectAccountTableViewAdapter.TopupSelectAccountTableViewClickListener {
-
-    lateinit var tableView: RecyclerView
-
-
     // initialize all elements here
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        activity?.actionBar?.hide()
+        val activity = activity as AppCompatActivity?
+        if (activity != null) {
+            activity.supportActionBar!!.hide()
+        }
 
         val view = inflater.inflate(R.layout.fragment_topup, container, false)
         view.TopUpAccountTable.adapter = TopupSelectAccountTableViewAdapter(this)
         view.TopUpAccountTable.layoutManager = LinearLayoutManager(activity)
         return view
-    }
-
-    override fun onStart() {
-        super.onStart()
-        activity?.actionBar?.hide()
-
     }
 
     override fun listItemClicked(account: Account) {

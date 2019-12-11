@@ -30,6 +30,7 @@ class TopupSelectCardFragment : Fragment(), TopupSelectCardTableViewAdapter.Topu
         super.onAttach(context)
         westpacAccountManager = WestpacAccountManager(context)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

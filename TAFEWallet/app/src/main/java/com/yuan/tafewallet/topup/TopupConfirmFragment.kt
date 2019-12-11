@@ -47,7 +47,7 @@ class TopupConfirmFragment : Fragment() {
         val view = inflater.inflate(com.yuan.tafewallet.R.layout.fragment_topup_confirm, container, false)
         view.AccountNameLabel.text = account.accountName
         view.AccountBalanceLabel.text = account.accountBalance
-        view.Amount.text = "$" + amount + ".00"
+        view.Amount.text = "$" + "%.2f".format(amount.toDouble())
 
         val text = "What does it mean?"
         val content = SpannableString(text)

@@ -1,7 +1,11 @@
 package com.yuan.tafewallet.models
 
+import android.content.Context
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.preference.PreferenceManager
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.io.Serializable
 
 data class WestpacTransaction(var transactionType: String, var transactionTime: String, var status: String, var receiptNumber: String,
@@ -104,5 +108,23 @@ data class CreditCard(var cardScheme: String, var cardType: String, var cardNumb
         override fun newArray(size: Int): Array<CreditCard?> {
             return arrayOfNulls(size)
         }
+    }
+}
+
+class WestpacTransactionManager(val context: Context) {
+    fun saveWestpacTransactions(westpacTransactions: ArrayList<WestpacTransaction>) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        val json = Gson().toJson(westpacTransactions)
+        sharedPreferences.putString("WestpacTransaction", json)
+
+        sharedPreferences.apply()
+    }
+
+    fun readWestpacTransactions(): ArrayList<WestpacTransaction> {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+
+        val json = sharedPreferences.getString("WestpacTransaction", "")
+
+        return Gson().fromJson(json, object : TypeToken<ArrayList<WestpacTransaction>>() {}.type)
     }
 }
