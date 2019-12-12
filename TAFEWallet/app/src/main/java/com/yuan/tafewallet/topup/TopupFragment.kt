@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +13,7 @@ import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.TopupSelectAccountTableViewAdapter
 import com.yuan.tafewallet.models.Account
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_topup.view.*
 
 class TopupFragment : Fragment(), TopupSelectAccountTableViewAdapter.TopupSelectAccountTableViewClickListener {
@@ -24,6 +26,7 @@ class TopupFragment : Fragment(), TopupSelectAccountTableViewAdapter.TopupSelect
         val activity = activity as AppCompatActivity?
         if (activity != null) {
             activity.supportActionBar!!.hide()
+            activity.nav_view.isVisible = true
         }
 
         val view = inflater.inflate(R.layout.fragment_topup, container, false)

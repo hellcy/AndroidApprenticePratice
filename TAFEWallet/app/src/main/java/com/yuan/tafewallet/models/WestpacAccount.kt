@@ -8,9 +8,9 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.Serializable
 
-data class WestpacAccount(var accountType: String, var accountToken: String, var defaultAccount: Boolean, var cardNumber: String,
-                             var expiryDateMonth: String, var expiryDateYear: String, var cardScheme: String, var cardType: String,
-                             var cardholderName: String, var maskedCardNumber4Digits: String):Serializable, Parcelable {
+data class WestpacAccount(var accountType: String = "", var accountToken: String = "", var defaultAccount: Boolean = false, var cardNumber: String = "",
+                             var expiryDateMonth: String = "", var expiryDateYear: String = "", var cardScheme: String = "", var cardType: String = "",
+                             var cardholderName: String = "", var maskedCardNumber4Digits: String = ""):Serializable, Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readString()!!,

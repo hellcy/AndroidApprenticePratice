@@ -16,7 +16,9 @@ import com.yuan.tafewallet.models.WestpacAccount
 import kotlinx.android.synthetic.main.fragment_topup_confirm.view.*
 import android.text.style.UnderlineSpan
 import android.text.SpannableString
+import androidx.core.view.isVisible
 import com.yuan.tafewallet.MainActivity
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class TopupConfirmFragment : Fragment() {
@@ -42,6 +44,7 @@ class TopupConfirmFragment : Fragment() {
         if (activity != null) {
             activity.supportActionBar!!.show()
             activity.supportActionBar?.title = "Confirm Top Up"
+            activity.nav_view.isVisible = false
         }
 
         val view = inflater.inflate(com.yuan.tafewallet.R.layout.fragment_topup_confirm, container, false)
@@ -71,7 +74,7 @@ class TopupConfirmFragment : Fragment() {
     companion object {
         val TAG = TopupConfirmFragment::class.java.simpleName
         @JvmStatic
-        fun newInstance(account: Account, westpacAccount: WestpacAccount, amount: Int): TopupConfirmFragment {
+        fun newInstance(account: Account, westpacAccount: WestpacAccount, amount: Int, secretToken: String?): TopupConfirmFragment {
             val fragment = TopupConfirmFragment()
             val args = Bundle()
             args.putParcelable("Account", account)

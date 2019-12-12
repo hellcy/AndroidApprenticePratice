@@ -9,12 +9,14 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.TopupCardDetailsTableViewAdapter
 import com.yuan.tafewallet.models.Account
 import com.yuan.tafewallet.models.WestpacAccount
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_topup_card_details.view.*
 
 class TopupCardDetailsFragment : Fragment() {
@@ -39,6 +41,7 @@ class TopupCardDetailsFragment : Fragment() {
         if (activity != null) {
             activity.supportActionBar!!.show()
             activity.supportActionBar?.title = "Card Details"
+            activity.nav_view.isVisible = false
         }
 
         val view = inflater.inflate(R.layout.fragment_topup_card_details, container, false)
@@ -55,7 +58,7 @@ class TopupCardDetailsFragment : Fragment() {
     }
 
     private fun continueButtonPressed() {
-        val fragment = TopupConfirmFragment.newInstance(account, westpacAccount, amount)
+        val fragment = TopupConfirmFragment.newInstance(account, westpacAccount, amount, null)
         (activity as MainActivity).gotoFragment(fragment, TopupConfirmFragment.TAG)
     }
 

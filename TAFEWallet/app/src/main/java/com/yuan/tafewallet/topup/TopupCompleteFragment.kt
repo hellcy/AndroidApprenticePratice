@@ -6,12 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yuan.tafewallet.MainActivity
 
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.TopupTransactionCompleteTableViewAdapter
 import com.yuan.tafewallet.models.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_topup_complete.view.*
 
 
@@ -44,8 +46,7 @@ class TopupCompleteFragment : Fragment() {
         if (activity != null) {
             activity.supportActionBar!!.show()
             activity.supportActionBar?.title = "Transaction Complete"
-            //activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+            activity.nav_view.isVisible = false
         }
 
         val view = inflater.inflate(R.layout.fragment_topup_complete, container, false)
@@ -61,11 +62,8 @@ class TopupCompleteFragment : Fragment() {
     }
 
     private fun doneButtonPressed() {
-        val fm = activity!!.supportFragmentManager
-        for (i in 0 until fm.backStackEntryCount) {
-            fm.popBackStack()
-        }
         val fragment = TopupFragment.newInstance()
+        (activity as MainActivity).clearBackStack()
         (activity as MainActivity).gotoFragment(fragment, TopupFragment.TAG)
     }
 

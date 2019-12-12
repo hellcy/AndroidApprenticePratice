@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yuan.tafewallet.MainActivity
@@ -15,6 +16,7 @@ import com.yuan.tafewallet.models.PaperCutAccount
 import com.yuan.tafewallet.models.PaperCutAccountManager
 import com.yuan.tafewallet.models.WestpacAccountManager
 import com.yuan.tafewallet.topup.TopupFragment
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_history.view.*
 
 class HistoryFragment : Fragment(), HistorySelectAccountTableViewAdapter.HistorySelectAccountTableViewClickListener {
@@ -45,6 +47,7 @@ class HistoryFragment : Fragment(), HistorySelectAccountTableViewAdapter.History
         val activity = activity as AppCompatActivity?
         if (activity != null) {
             activity.supportActionBar!!.hide()
+            activity.nav_view.isVisible = true
         }
         savedPaperCutAccounts = paperCutAccountManager.readPaperCutAccounts()
 

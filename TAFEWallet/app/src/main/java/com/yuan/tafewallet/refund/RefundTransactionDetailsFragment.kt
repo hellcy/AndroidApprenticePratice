@@ -12,19 +12,18 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.yuan.tafewallet.R
-import com.yuan.tafewallet.adapters.RefundCardDetailsTableViewAdapter
-import com.yuan.tafewallet.history.HistoryTransactionDetailsFragment
-import com.yuan.tafewallet.models.Transaction
+import com.yuan.tafewallet.adapters.RefundTransactionDetailsTableViewAdapter
 import com.yuan.tafewallet.models.WestpacTransaction
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_refund_card_details.view.*
+import kotlinx.android.synthetic.main.fragment_refund_transaction_details.view.*
 
-class RefundCardDetailsFragment : Fragment() {
-    lateinit var transaction: WestpacTransaction
+class RefundTransactionDetailsFragment : Fragment() {
+    lateinit var refundedTransaction: WestpacTransaction
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        transaction = arguments?.getParcelable("Transaction")!!
+        refundedTransaction = arguments?.getParcelable("RefundedTransaction")!!
     }
 
     override fun onCreateView(
@@ -34,14 +33,14 @@ class RefundCardDetailsFragment : Fragment() {
         val activity = activity as AppCompatActivity?
         if (activity != null) {
             activity.supportActionBar!!.show()
-            activity.supportActionBar?.title = "Card Details"
+            activity.supportActionBar?.title = "Transaction Details"
             activity.nav_view.isVisible = false
         }
 
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_refund_card_details, container, false)
-        view.refundCardDetailsTable.adapter = RefundCardDetailsTableViewAdapter(transaction)
-        view.refundCardDetailsTable.layoutManager = LinearLayoutManager(activity)
+        val view = inflater.inflate(R.layout.fragment_refund_transaction_details, container, false)
+        view.refundTransactionDetailsTable.adapter = RefundTransactionDetailsTableViewAdapter(refundedTransaction)
+        view.refundTransactionDetailsTable.layoutManager = LinearLayoutManager(activity)
         view.BackButton.setOnClickListener { v ->
             backButtonPressed()
         }
@@ -53,12 +52,12 @@ class RefundCardDetailsFragment : Fragment() {
     }
 
     companion object {
-        val TAG = RefundCardDetailsFragment::class.java.simpleName
+        val TAG = RefundTransactionDetailsFragment::class.java.simpleName
         @JvmStatic
-        fun newInstance(transaction: WestpacTransaction): RefundCardDetailsFragment {
-            val fragment = RefundCardDetailsFragment()
+        fun newInstance(refundedTransaction: WestpacTransaction): RefundTransactionDetailsFragment {
+            val fragment = RefundTransactionDetailsFragment()
             val args = Bundle()
-            args.putParcelable("Transaction", transaction)
+            args.putParcelable("RefundedTransaction", refundedTransaction)
             fragment.arguments = args
             return fragment
         }

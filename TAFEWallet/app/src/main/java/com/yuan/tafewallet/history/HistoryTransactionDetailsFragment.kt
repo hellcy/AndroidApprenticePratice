@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yuan.tafewallet.MainActivity
 
@@ -16,6 +17,7 @@ import com.yuan.tafewallet.adapters.HistoryTransactionDetailsTableViewAdapter
 import com.yuan.tafewallet.models.PaperCutAccount
 import com.yuan.tafewallet.models.Transaction
 import com.yuan.tafewallet.topup.TopupFragment
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_history_transaction_details.view.*
 
 class HistoryTransactionDetailsFragment : Fragment() {
@@ -34,6 +36,7 @@ class HistoryTransactionDetailsFragment : Fragment() {
         if (activity != null) {
             activity.supportActionBar!!.show()
             activity.supportActionBar?.title = "Details"
+            activity.nav_view.isVisible = false
         }
 
         val view = inflater.inflate(R.layout.fragment_history_transaction_details, container, false)

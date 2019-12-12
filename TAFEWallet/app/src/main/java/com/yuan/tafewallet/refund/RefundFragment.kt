@@ -7,12 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.history.HistoryTransactionsFragment
 import com.yuan.tafewallet.models.*
+import com.yuan.tafewallet.topup.TopupFragment
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_refund.view.*
 
 class RefundFragment : Fragment() {
@@ -45,6 +48,12 @@ class RefundFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val activity = activity as AppCompatActivity?
+        if (activity != null) {
+            activity.supportActionBar!!.hide()
+            activity.nav_view.isVisible = true
+        }
+
         primaryAccount = paperCutAccountManager.readPrimaryAccount()
 
         val view = inflater.inflate(R.layout.fragment_refund, container, false)
@@ -83,5 +92,11 @@ class RefundFragment : Fragment() {
     private fun hideKeyboard(view: View) {
         val imm = context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    companion object {
+        val TAG = RefundFragment::class.java.simpleName
+        @JvmStatic
+        fun newInstance() = RefundFragment()
     }
 }

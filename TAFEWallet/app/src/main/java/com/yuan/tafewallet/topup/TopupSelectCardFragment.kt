@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yuan.tafewallet.MainActivity
 
@@ -15,6 +16,7 @@ import com.yuan.tafewallet.adapters.TopupSelectCardTableViewAdapter
 import com.yuan.tafewallet.models.Account
 import com.yuan.tafewallet.models.WestpacAccount
 import com.yuan.tafewallet.models.WestpacAccountManager
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_topup_select_card.view.*
 
 class TopupSelectCardFragment : Fragment(), TopupSelectCardTableViewAdapter.TopupSelectCardTableViewClickListener {
@@ -50,23 +52,33 @@ class TopupSelectCardFragment : Fragment(), TopupSelectCardTableViewAdapter.Topu
         if (activity != null) {
             activity.supportActionBar!!.show()
             activity.supportActionBar?.title = "Select Credit/Debit Card"
+            activity.nav_view.isVisible = false
         }
         savedAccounts = westpacAccountManager.readWestpacAccounts()
 
         val view = inflater.inflate(R.layout.fragment_topup_select_card, container, false)
         view.AccountNameLabel.text = account.accountName
         view.AccountBalanceLabel.text = account.accountBalance
+        view.UseNewCardButton.setOnClickListener { v ->
+            useNewCardButtonPressed()
+        }
 
         view.topupSelectCardTable.adapter = TopupSelectCardTableViewAdapter(savedAccounts, this)
         view.topupSelectCardTable.layoutManager = LinearLayoutManager(activity)
 
-
         return view
     }
 
+    // go to saved cards
     override fun listItemClicked(position: Int) {
         val fragment = TopupCardDetailsFragment.newInstance(account, savedAccounts[position], amount)
         (activity as MainActivity).gotoFragment(fragment, TopupCardDetailsFragment.TAG)
+    }
+
+    // go to new card
+    private fun useNewCardButtonPressed() {
+        val fragment = TopupNewCardFragment.newInstance(account, amount)
+        (activity as MainActivity).gotoFragment(fragment, TopupNewCardFragment.TAG)
     }
 
     companion object {

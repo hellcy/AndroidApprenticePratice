@@ -5,12 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.TopupSelectAmountTableViewAdapter
 import com.yuan.tafewallet.models.Account
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_topup_select_amount.view.*
 
 
@@ -33,6 +35,7 @@ class TopupSelectAmountFragment : Fragment(), TopupSelectAmountTableViewAdapter.
         if (activity != null) {
             activity.supportActionBar!!.show()
             activity.supportActionBar?.title = "Top Up Account"
+            activity.nav_view.isVisible = false
         }
 
         val view = inflater.inflate(R.layout.fragment_topup_select_amount, container, false)

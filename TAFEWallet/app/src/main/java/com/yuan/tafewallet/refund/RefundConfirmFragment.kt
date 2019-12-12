@@ -16,9 +16,8 @@ import com.yuan.tafewallet.MainActivity
 
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.RefundConfirmTableViewAdapter
-import com.yuan.tafewallet.history.HistoryTransactionsFragment
 import com.yuan.tafewallet.models.WestpacTransaction
-import kotlinx.android.synthetic.main.fragment_refund_confirm.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_refund_confirm.view.*
 
 class RefundConfirmFragment : Fragment(), RefundConfirmTableViewAdapter.RefundConfirmTableViewClickListener {
@@ -41,6 +40,7 @@ class RefundConfirmFragment : Fragment(), RefundConfirmTableViewAdapter.RefundCo
         if (activity != null) {
             activity.supportActionBar!!.show()
             activity.supportActionBar?.title = "Refund"
+            activity.nav_view.isVisible = false
         }
 
         // Inflate the layout for this fragment
@@ -68,7 +68,13 @@ class RefundConfirmFragment : Fragment(), RefundConfirmTableViewAdapter.RefundCo
         Handler().postDelayed({
             //Dismiss progress bar after 4 seconds
             progressBar.dialog.dismiss()
-            val fragment = RefundCompleteFragment.newInstance(transactions, 1.0, 2.0, 3.0)
+            // TODO: call api to get refundedTransactions, for now use transactions for display only
+            // TODO: call api to calculate refunded amount for each transaction, add them up to get total refunded amount
+            // TODO: get the updatedBalance from the last transaction in the loop
+            // sample data
+            var refundedAmount = 5.0
+            var updatedBalance = 18.95
+            val fragment = RefundCompleteFragment.newInstance(transactions, refundedAmount, amount, updatedBalance)
             (activity as MainActivity).gotoFragment(fragment, RefundCompleteFragment.TAG)
         }, 1000)
     }

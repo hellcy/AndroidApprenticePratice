@@ -4,11 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.HomeTableViewAdapter
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_home.view.*
 
 class HomeFragment : Fragment() {
     lateinit var tableView: RecyclerView
@@ -27,20 +31,16 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_home, container, false)
-
-        return root
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        view?.let {
-            tableView = it.findViewById(R.id.homeTableView)
-            tableView.layoutManager = LinearLayoutManager(activity)
-            tableView.adapter = HomeTableViewAdapter()
-
+        val activity = activity as AppCompatActivity?
+        if (activity != null) {
+            activity.supportActionBar!!.hide()
+            activity.nav_view.isVisible = true
         }
+
+        val view = inflater.inflate(R.layout.fragment_home, container, false)
+        view.homeTableView.adapter = HomeTableViewAdapter()
+        view.homeTableView.layoutManager = LinearLayoutManager(activity)
+        return view
     }
 
 }
