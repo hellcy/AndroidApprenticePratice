@@ -16,8 +16,6 @@ import com.yuan.tafewallet.models.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_topup_complete.view.*
 
-
-
 class TopupCompleteFragment : Fragment() {
     lateinit var account: Account
     var amount: Int = 0
@@ -64,7 +62,7 @@ class TopupCompleteFragment : Fragment() {
     private fun doneButtonPressed() {
         val fragment = TopupFragment.newInstance()
         (activity as MainActivity).clearBackStack()
-        (activity as MainActivity).gotoFragment(fragment, TopupFragment.TAG)
+        (activity as MainActivity).setFragment(fragment)
     }
 
     companion object {

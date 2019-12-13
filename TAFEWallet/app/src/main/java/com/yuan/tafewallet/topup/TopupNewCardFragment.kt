@@ -7,11 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebViewClient
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.models.Account
 import com.yuan.tafewallet.models.WestpacAccount
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_topup_new_card.view.*
 
 class TopupNewCardFragment : Fragment() {
@@ -31,6 +34,13 @@ class TopupNewCardFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val activity = activity as AppCompatActivity?
+        if (activity != null) {
+            activity.supportActionBar!!.show()
+            activity.supportActionBar?.title = "New Credit/Debit Card"
+            activity.nav_view.isVisible = false
+        }
+
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_topup_new_card, container, false)
         view.AccountBalanceLabel.text = account.accountBalance

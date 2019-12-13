@@ -83,6 +83,7 @@
         android:layout_marginBottom="32dp"
         android:background="#AA7BC9"
         android:text="Use new card"
+        android:textAllCaps="false"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"

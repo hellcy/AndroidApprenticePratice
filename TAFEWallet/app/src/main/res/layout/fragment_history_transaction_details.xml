@@ -41,6 +41,7 @@
         android:layout_marginBottom="24dp"
         android:background="#AA7BC9"
         android:text="Back"
+        android:textAllCaps="false"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
         android:textStyle="bold"

@@ -77,7 +77,7 @@ class RefundCompleteFragment : Fragment(), RefundCompleteTableViewAdapter.Refund
     private fun doneButtonPressed() {
         val fragment = RefundFragment.newInstance()
         (activity as MainActivity).clearBackStack()
-        (activity as MainActivity).gotoFragment(fragment, RefundFragment.TAG)
+        (activity as MainActivity).setFragment(fragment)
     }
 
     companion object {

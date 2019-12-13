@@ -72,6 +72,11 @@ class RefundFragment : Fragment() {
         return view
     }
 
+    override fun onResume() {
+        super.onResume()
+        view?.RefundAmount?.text?.clear()
+    }
+
     private fun continueButtonPressed() {
         refundAmount = view!!.RefundAmount.text.toString().toDoubleOrNull() ?: 0.0
         if (refundAmount <= 0) {

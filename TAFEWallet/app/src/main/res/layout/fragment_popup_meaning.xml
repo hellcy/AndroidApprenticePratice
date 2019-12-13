@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/fragment_topup_confirm"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:minWidth="300dp"
+android:minHeight="200dp"
+android:background="@color/colorPrimaryDark"
+tools:context=".PopupMeaningFragment">
+
+<TextView
+    android:id="@+id/title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:text="Important"
+    android:textSize="18sp"
+    android:textStyle="bold"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/GotItButton"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/lightGrey"
+        android:text="Got it!"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/GotItButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title">
+
+        <TextView
+            android:id="@+id/termsContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="This card will be saved securely in your TAFE wallet account for future use."
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

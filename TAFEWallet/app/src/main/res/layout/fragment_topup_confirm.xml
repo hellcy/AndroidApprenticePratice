@@ -100,18 +100,19 @@
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
     <Button
-    android:id="@+id/ConfirmButton"
-    android:layout_width="180dp"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="32dp"
-    android:background="#AA7BC9"
-    android:text="Confirm to proceed"
-    android:textColor="#FFFFFF"
-    android:textSize="16sp"
-    android:textStyle="bold"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent" />
+        android:id="@+id/ConfirmButton"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:background="#AA7BC9"
+        android:text="Confirm to proceed"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/Amount"
@@ -143,7 +144,7 @@
         android:autoLink="all"
         android:text="What does it mean?"
         android:textAllCaps="false"
-        android:textColor="#0000FF"
+        android:textColor="#147efb"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/saveCardBox" />
 
