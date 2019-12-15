@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,14 +17,38 @@ import com.yuan.tafewallet.MainActivity
 
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.RefundConfirmTableViewAdapter
+import com.yuan.tafewallet.history.HistoryTransactionsFragment
+import com.yuan.tafewallet.models.PaperCutAccountManager
+import com.yuan.tafewallet.models.UnicardAccountManager
 import com.yuan.tafewallet.models.WestpacTransaction
+import com.yuan.tafewallet.service.GetRefundTransactionService
+import com.yuan.tafewallet.service.GetRefundTransactionsRequestBody
+import com.yuan.tafewallet.service.RefundTransactionRequestBody
+import com.yuan.tafewallet.service.RefundTransactionService
+import com.yuan.tafewallet.topup.TopupFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_refund.view.*
 import kotlinx.android.synthetic.main.fragment_refund_confirm.view.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class RefundConfirmFragment : Fragment(), RefundConfirmTableViewAdapter.RefundConfirmTableViewClickListener {
     lateinit var transactions: ArrayList<WestpacTransaction>
+    var refundedTransactions = ArrayList<WestpacTransaction>()
+    var refundedAmount: Double = 0.0
+    var updatedBalance: Double = 0.0
+
+    lateinit var unicardAccountManager: UnicardAccountManager
+    lateinit var paperCutAccountManager: PaperCutAccountManager
     var amount: Double = 0.0
     val progressBar = CustomProgressBar()
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        unicardAccountManager = UnicardAccountManager(context)
+        paperCutAccountManager = PaperCutAccountManager(context)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +64,7 @@ class RefundConfirmFragment : Fragment(), RefundConfirmTableViewAdapter.RefundCo
         val activity = activity as AppCompatActivity?
         if (activity != null) {
             activity.supportActionBar!!.show()
+            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
             activity.supportActionBar?.title = "Refund"
             activity.nav_view.isVisible = false
         }
@@ -47,7 +73,7 @@ class RefundConfirmFragment : Fragment(), RefundConfirmTableViewAdapter.RefundCo
         val view = inflater.inflate(R.layout.fragment_refund_confirm, container, false)
         view.refundAmount.text = "$" + "%.2f".format(amount)
         view.RefundConfirmButton.setOnClickListener { v ->
-            confirmRefundButtonPressed()
+            confirmRefundButtonPressed(view)
         }
         view.progressBar.isVisible = false
 
@@ -61,21 +87,58 @@ class RefundConfirmFragment : Fragment(), RefundConfirmTableViewAdapter.RefundCo
         (activity as MainActivity).gotoFragment(fragment, RefundCardDetailsFragment.TAG)
     }
 
-    private fun confirmRefundButtonPressed() {
+    private fun confirmRefundButtonPressed(view: View) {
         progressBar.show(context!!,"Refund in progress... \nPlease do not close or exit this application")
+        var count = transactions.size
+        for (transaction in transactions) {
+            refundTransaction(view, transaction, count)
+            count--
+        }
 
-        Handler().postDelayed({
-            //Dismiss progress bar after 4 seconds
-            progressBar.dialog.dismiss()
-            // TODO: call api to get refundedTransactions, for now use transactions for display only
-            // TODO: call api to calculate refunded amount for each transaction, add them up to get total refunded amount
-            // TODO: get the updatedBalance from the last transaction in the loop
-            // sample data
-            var refundedAmount = 5.0
-            var updatedBalance = 18.95
-            val fragment = RefundCompleteFragment.newInstance(transactions, refundedAmount, amount, updatedBalance)
-            (activity as MainActivity).gotoFragment(fragment, RefundCompleteFragment.TAG)
-        }, 1000)
+//        Handler().postDelayed({
+//            //Dismiss progress bar after 4 seconds
+//            progressBar.dialog.dismiss()
+//            // TODO: call api to get refundedTransactions, for now use transactions for display only
+//            // TODO: call api to calculate refunded amount for each transaction, add them up to get total refunded amount
+//            // TODO: get the updatedBalance from the last transaction in the loop
+//            // sample data
+//            var refundedAmount = 5.0
+//            var updatedBalance = 18.95
+//            val fragment = RefundCompleteFragment.newInstance(transactions, refundedAmount, amount, updatedBalance)
+//            (activity as MainActivity).gotoFragment(fragment, RefundCompleteFragment.TAG)
+//        }, 1000)
+    }
+
+    private fun refundTransaction(view: View, transaction: WestpacTransaction, count: Int) {
+        val refundTransactionService = RefundTransactionService.instance
+        val requestBody = RefundTransactionRequestBody(transaction.receiptNumber, transaction.refundableAmount.toString(), unicardAccountManager.readUnicardAccount().UnicardID, paperCutAccountManager.readPrimaryAccount().AccountName!!)
+        val request = refundTransactionService.refundTransaction(requestBody)
+
+        request.enqueue(object : Callback<WestpacTransaction> {
+            override fun onFailure(call: Call<WestpacTransaction>, t: Throwable) {
+                Log.i(TopupFragment.TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+            }
+
+            override fun onResponse(
+                call: Call<WestpacTransaction>,
+                response: Response<WestpacTransaction>
+            ) {
+                Log.i(TopupFragment.TAG, "Got response with status code " + "${response.code()} and message " + response.message())
+                if (response.isSuccessful) {
+                    refundedTransactions.add(response.body()!!)
+                    refundedAmount += response.body()!!.refundableAmount?.toDouble()!!
+                    updatedBalance = response.body()!!.updatedBalance?.toDouble()!!
+                    Log.i(TopupFragment.TAG, "refund transaction response body " + "${response.body()}")
+                } else {
+                    (activity as MainActivity).showAlert()
+                }
+                if (count == 1) {
+                    progressBar.dialog.dismiss()
+                    val fragment = RefundCompleteFragment.newInstance(transactions, refundedAmount, amount, updatedBalance)
+                    (activity as MainActivity).gotoFragment(fragment, RefundCompleteFragment.TAG)
+                }
+            }
+        })
     }
 
     companion object {

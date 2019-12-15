@@ -2,7 +2,11 @@ package com.yuan.tafewallet.history
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.icu.text.SimpleDateFormat
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,31 +18,36 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.yuan.tafewallet.DatePickerFragment
 import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
+import com.yuan.tafewallet.adapters.HistorySelectAccountTableViewAdapter
 import com.yuan.tafewallet.adapters.HistoryTransactionsTableViewAdapter
 import com.yuan.tafewallet.models.PaperCutAccount
 import com.yuan.tafewallet.models.Transaction
+import com.yuan.tafewallet.service.GetPaperCutAccountsRequestBody
+import com.yuan.tafewallet.service.GetPaperCutAccountsService
+import com.yuan.tafewallet.service.GetTransactionHistoryRequestBody
+import com.yuan.tafewallet.service.GetTransactionHistoryService
+import com.yuan.tafewallet.topup.TopupFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_history.view.*
 import kotlinx.android.synthetic.main.fragment_history_transactions.view.*
-
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.time.LocalDate
 
 class HistoryTransactionsFragment : Fragment(), HistoryTransactionsTableViewAdapter.HistoryTransactionsTableViewClickListener {
     val fromDateCode: Int = 1
     val toDateCode: Int = 2
     var selectedDate = ""
+    var fromDate: String? = ""
+    var toDate: String? = ""
+
     lateinit var paperCutAccount: PaperCutAccount
     var transactions = ArrayList<Transaction>()
-    val transaction1 = Transaction("ADJUST", "Unicard Top up-123456789", 5.0, "TransactionDate", "Y")
-    val transaction2 = Transaction("ADJUST", "Unicard Top up-123456789", 8.0, "TransactionDate", "Y")
-    val transaction3 = Transaction("ADJUST", "Unicard Refund-123456789", -3.0, "TransactionDate", "Y")
-    val transaction4 = Transaction("ADJUST", "Unicard Top up-123456789", 15.0, "TransactionDate", "Y")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         paperCutAccount = arguments?.getParcelable("Account")!!
-        transactions.add(transaction1)
-        transactions.add(transaction2)
-        transactions.add(transaction3)
-        transactions.add(transaction4)
     }
 
     override fun onCreateView(
@@ -49,6 +58,7 @@ class HistoryTransactionsFragment : Fragment(), HistoryTransactionsTableViewAdap
         val activity = activity as AppCompatActivity?
         if (activity != null) {
             activity.supportActionBar!!.show()
+            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
             activity.supportActionBar?.title = paperCutAccount.AccountName
             activity.nav_view.isVisible = false
         }
@@ -56,6 +66,7 @@ class HistoryTransactionsFragment : Fragment(), HistoryTransactionsTableViewAdap
         val view = inflater.inflate(R.layout.fragment_history_transactions, container, false)
         view.AccountNameLabel.text = paperCutAccount.AccountName
         view.AccountBalanceLabel.text = "$" + "%.2f".format(paperCutAccount.Balance)
+
         view.FromDate.setOnClickListener {
             // create the datePickerFragment
             val newFragment: AppCompatDialogFragment = DatePickerFragment()
@@ -82,27 +93,68 @@ class HistoryTransactionsFragment : Fragment(), HistoryTransactionsTableViewAdap
     }
 
     override fun listItemClicked(position: Int) {
-        val fragment = HistoryTransactionDetailsFragment.newInstance(transactions[position])
+        val fragment = HistoryTransactionDetailsFragment.newInstance(transactions[transactions.size - position - 1])
         (activity as MainActivity).gotoFragment(fragment, HistoryTransactionDetailsFragment.TAG)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        val format = SimpleDateFormat("yyyy-MM-dd")
         if (requestCode == fromDateCode && resultCode == Activity.RESULT_OK) { // get date from string
             selectedDate = data!!.getStringExtra("selectedDate")
             // set the value of the editText
             view?.FromDate?.text = selectedDate
+            view?.FromDate?.setTextColor(Color.BLACK)
+            fromDate = format.format(SimpleDateFormat("MM/dd/yyyy").parse(selectedDate))
         }
 
         if (requestCode == toDateCode && resultCode == Activity.RESULT_OK) { // get date from string
             selectedDate = data!!.getStringExtra("selectedDate")
             // set the value of the editText
             view?.ToDate?.text = selectedDate
+            view?.ToDate?.setTextColor(Color.BLACK)
+            toDate = format.format(SimpleDateFormat("MM/dd/yyyy").parse(selectedDate))
         }
     }
 
     private fun searchButtonPressed() {
         //TODO: call api to get transaction history and pass it to table adapter
+        if (view?.FromDate?.text == "FromDate") {
+            view?.FromDate?.setTextColor(Color.RED)
+        } else if (view?.ToDate?.text == "ToDate") {
+            view?.ToDate?.setTextColor(Color.RED)
+        } else {
+            getTransactionHistory(view!!)
+        }
+    }
+
+    private fun getTransactionHistory(view: View) {
+        val getTransactionHistoryService = GetTransactionHistoryService.instance
+        val requestBody = GetTransactionHistoryRequestBody(paperCutAccount.AccountName!!, fromDate!!, toDate!!)
+        val request = getTransactionHistoryService.getTransactionHistory(requestBody)
+
+        request.enqueue(object : Callback<ArrayList<Transaction>> {
+            override fun onFailure(call: Call<ArrayList<Transaction>>, t: Throwable) {
+                Log.i(TopupFragment.TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<Transaction>>,
+                response: Response<ArrayList<Transaction>>
+            ) {
+                Log.i(TopupFragment.TAG, "Got response with status code " + "${response.code()} and message " + response.message())
+                if (response.isSuccessful) {
+                    if (response.body()?.size == 0) (activity as MainActivity).showAlert()
+                    else {
+                        transactions = response.body()!!
+                        Log.i(TopupFragment.TAG, "get transaction history response body " + transactions)
+                        view.historyTransactionsTable.adapter = HistoryTransactionsTableViewAdapter(transactions, this@HistoryTransactionsFragment)
+                    }
+                } else {
+                    (activity as MainActivity).showAlert()
+                }
+            }
+        })
     }
 
     companion object {

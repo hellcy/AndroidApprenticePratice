@@ -35,6 +35,7 @@ class TopupSelectAmountFragment : Fragment(), TopupSelectAmountTableViewAdapter.
         val activity = activity as AppCompatActivity?
         if (activity != null) {
             activity.supportActionBar!!.show()
+            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
             activity.supportActionBar?.title = "Top Up Account"
             activity.nav_view.isVisible = false
         }

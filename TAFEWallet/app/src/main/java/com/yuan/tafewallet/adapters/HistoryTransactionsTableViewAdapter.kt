@@ -31,7 +31,7 @@ class HistoryTransactionsTableViewAdapter(val transactions: ArrayList<Transactio
     }
 
     override fun onBindViewHolder(holder: HistoryTransactionsViewHolder, position: Int) {
-        val transaction = transactions[position]
+        val transaction = transactions[transactions.size - position - 1]
         holder.transactionType.text = transaction.Comments!!.split("-")[0]
         holder.transactionTime.text = transaction.TransactionDate
         holder.transactionAmount.text = "$" + "%.2f".format(transaction.amount)

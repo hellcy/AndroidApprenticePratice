@@ -14,6 +14,10 @@ import com.yuan.tafewallet.history.HistoryTransactionsFragment
 import com.yuan.tafewallet.home.HomeFragment
 import com.yuan.tafewallet.refund.RefundFragment
 import com.yuan.tafewallet.topup.TopupFragment
+import android.app.Activity
+import com.yuan.tafewallet.refund.RefundCompleteFragment
+import com.yuan.tafewallet.topup.TopupCompleteFragment
+
 
 class MainActivity : AppCompatActivity() {
     private var navController: FrameLayout? = null
@@ -84,6 +88,25 @@ class MainActivity : AppCompatActivity() {
             this.overridePendingTransition(R.anim.trans_right_in, R.anim.trans_right_out)
             return
         }
+
+        val fragments = supportFragmentManager.fragments
+        var handled = false
+        for (fragment in fragments) {
+            if (fragment is TopupCompleteFragment) {
+                handled = (fragment as TopupCompleteFragment).onBackPressed()
+                if (handled) {
+                    break
+                }
+            }
+            if (fragment is RefundCompleteFragment) {
+                handled = (fragment as RefundCompleteFragment).onBackPressed()
+                if (handled) {
+                    break
+                }
+            }
+        }
+
+
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
             if (supportFragmentManager.backStackEntryCount == 1) {

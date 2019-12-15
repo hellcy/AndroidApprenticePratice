@@ -38,6 +38,7 @@ class TopupNewCardFragment : Fragment() {
         val activity = activity as AppCompatActivity?
         if (activity != null) {
             activity.supportActionBar!!.show()
+            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
             activity.supportActionBar?.title = "New Credit/Debit Card"
             activity.nav_view.isVisible = false
         }

@@ -35,6 +35,7 @@ class LoginActivity : AppCompatActivity() {
 
         loginButton.setOnClickListener {v -> loginButtonPressed()}
         savedPaperCutID = unicardAccountManager.readPaperCutID()
+
         // TODO: Get information from TAFE SSO
 
         // first time log in

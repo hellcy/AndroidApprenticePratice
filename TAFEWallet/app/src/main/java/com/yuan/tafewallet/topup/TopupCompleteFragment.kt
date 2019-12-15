@@ -24,6 +24,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+
 class TopupCompleteFragment : Fragment() {
     lateinit var account: PaperCutAccount
     var amount: Int = 0
@@ -47,10 +48,11 @@ class TopupCompleteFragment : Fragment() {
         if (activity != null) {
             activity.supportActionBar!!.show()
             activity.supportActionBar?.title = "Transaction Complete"
+            activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
             activity.nav_view.isVisible = false
         }
 
-        val view = inflater.inflate(R.layout.fragment_topup_complete, container, false)
+        val view = inflater.inflate(com.yuan.tafewallet.R.layout.fragment_topup_complete, container, false)
         var updatedBalance = account.Balance
         if (westpacTransaction.status == "Approved") {
             updatedBalance += amount
@@ -74,7 +76,7 @@ class TopupCompleteFragment : Fragment() {
         (activity as MainActivity).setFragment(fragment)
     }
 
-    fun retrievePaperCutAccountBalance() {
+    private fun retrievePaperCutAccountBalance() {
         val paperCutAccountManager = PaperCutAccountManager(context!!)
         val getPaperCutAccountBalanceService = GetPaperCutAccountBalanceService.instance
         val requestBody = GetPaperCutAccountsRequestBody(account.AccountName!!)
@@ -99,6 +101,13 @@ class TopupCompleteFragment : Fragment() {
                 }
             }
         })
+    }
+
+    fun onBackPressed(): Boolean {
+        val fragment = TopupFragment.newInstance()
+        (activity as MainActivity).clearBackStack()
+        (activity as MainActivity).setFragment(fragment)
+        return true
     }
 
     companion object {

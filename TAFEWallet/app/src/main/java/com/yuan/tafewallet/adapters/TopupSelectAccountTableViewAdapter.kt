@@ -13,9 +13,8 @@ import com.yuan.tafewallet.models.PaperCutAccount
 import com.yuan.tafewallet.models.PaperCutAccountManager
 
 
-class TopupSelectAccountTableViewAdapter(val context: Context, val clickListener: TopupSelectAccountTableViewClickListener)
+class TopupSelectAccountTableViewAdapter(val paperCutAccounts: ArrayList<PaperCutAccount>, val clickListener: TopupSelectAccountTableViewClickListener)
     : RecyclerView.Adapter<TopupSelectAccountViewHolder>() {
-    val paperCutAccount = PaperCutAccountManager(context).readPrimaryAccount()
 
     interface TopupSelectAccountTableViewClickListener {
         fun listItemClicked(account: PaperCutAccount)
@@ -35,6 +34,7 @@ class TopupSelectAccountTableViewAdapter(val context: Context, val clickListener
     }
 
     override fun onBindViewHolder(holder: TopupSelectAccountViewHolder, position: Int) {
+        val paperCutAccount = paperCutAccounts[0]
         when (position) {
             0 -> {
                 holder.accountName.text = paperCutAccount.AccountName

@@ -33,6 +33,7 @@ class RefundTransactionDetailsFragment : Fragment() {
         val activity = activity as AppCompatActivity?
         if (activity != null) {
             activity.supportActionBar!!.show()
+            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
             activity.supportActionBar?.title = "Transaction Details"
             activity.nav_view.isVisible = false
         }

@@ -50,6 +50,7 @@ class RefundCompleteFragment : Fragment(), RefundCompleteTableViewAdapter.Refund
         val activity = activity as AppCompatActivity?
         if (activity != null) {
             activity.supportActionBar!!.show()
+            activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
             activity.supportActionBar?.title = "Refund Complete"
             activity.nav_view.isVisible = false
         }
@@ -78,6 +79,13 @@ class RefundCompleteFragment : Fragment(), RefundCompleteTableViewAdapter.Refund
         val fragment = RefundFragment.newInstance()
         (activity as MainActivity).clearBackStack()
         (activity as MainActivity).setFragment(fragment)
+    }
+
+    fun onBackPressed(): Boolean {
+        val fragment = RefundFragment.newInstance()
+        (activity as MainActivity).clearBackStack()
+        (activity as MainActivity).setFragment(fragment)
+        return true
     }
 
     companion object {
