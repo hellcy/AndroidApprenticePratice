@@ -15,6 +15,7 @@ import com.yuan.tafewallet.PopupMeaningFragment
 import com.yuan.tafewallet.PopupTermsFragment
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.HomeTableViewAdapter
+import com.yuan.tafewallet.models.PaperCutAccountManager
 import com.yuan.tafewallet.refund.RefundFragment
 import com.yuan.tafewallet.topup.TopupSelectAmountFragment
 import kotlinx.android.synthetic.main.activity_main.*
@@ -22,17 +23,6 @@ import kotlinx.android.synthetic.main.fragment_home.view.*
 import kotlinx.android.synthetic.main.fragment_topup_confirm.view.*
 
 class HomeFragment : Fragment() {
-    lateinit var tableView: RecyclerView
-
-    companion object {
-        fun newInstance(): HomeFragment {
-            var homeFragment = HomeFragment()
-            var args = Bundle()
-            homeFragment.arguments = args
-            return homeFragment
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -43,6 +33,8 @@ class HomeFragment : Fragment() {
             activity.supportActionBar!!.hide()
             activity.nav_view.isVisible = true
         }
+
+        val paperCutAccountManager = PaperCutAccountManager(context!!)
 
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         view.viewTermsLabel.setOnClickListener {
@@ -55,9 +47,18 @@ class HomeFragment : Fragment() {
             dialogFragmentTransaction.addToBackStack(null)
             newFragment.show(dialogFragmentTransaction!!, "dialog")
         }
-
-        view.homeTableView.adapter = HomeTableViewAdapter()
+        view.Username.text = paperCutAccountManager.readPrimaryAccount().FullName
+        view.homeTableView.adapter = HomeTableViewAdapter(context!!)
         view.homeTableView.layoutManager = LinearLayoutManager(activity)
         return view
+    }
+
+    companion object {
+        fun newInstance(): HomeFragment {
+            var homeFragment = HomeFragment()
+            var args = Bundle()
+            homeFragment.arguments = args
+            return homeFragment
+        }
     }
 }

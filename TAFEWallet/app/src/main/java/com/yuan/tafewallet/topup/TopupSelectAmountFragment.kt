@@ -12,12 +12,13 @@ import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.TopupSelectAmountTableViewAdapter
 import com.yuan.tafewallet.models.Account
+import com.yuan.tafewallet.models.PaperCutAccount
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_topup_select_amount.view.*
 
 
 class TopupSelectAmountFragment : Fragment(), TopupSelectAmountTableViewAdapter.TopupSelectAmountTableViewClickListener {
-    lateinit var account: Account
+    lateinit var account: PaperCutAccount
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +40,8 @@ class TopupSelectAmountFragment : Fragment(), TopupSelectAmountTableViewAdapter.
         }
 
         val view = inflater.inflate(R.layout.fragment_topup_select_amount, container, false)
-        view.AccountNameLabel.text = account.accountName
-        view.AccountBalanceLabel.text = account.accountBalance
+        view.AccountNameLabel.text = account.AccountName
+        view.AccountBalanceLabel.text = "$" + "%.2f".format(account.Balance)
 
         view.topupSelectAmountTable.adapter = TopupSelectAmountTableViewAdapter(this)
         view.topupSelectAmountTable.layoutManager = LinearLayoutManager(activity)
@@ -57,7 +58,7 @@ class TopupSelectAmountFragment : Fragment(), TopupSelectAmountTableViewAdapter.
     companion object {
         val TAG = TopupSelectAmountFragment::class.java.simpleName
         @JvmStatic
-        fun newInstance(account: Account): TopupSelectAmountFragment {
+        fun newInstance(account: PaperCutAccount): TopupSelectAmountFragment {
             val fragment = TopupSelectAmountFragment()
             val args = Bundle()
             args.putParcelable("Account", account)

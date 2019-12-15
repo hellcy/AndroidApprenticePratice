@@ -1,5 +1,6 @@
 package com.yuan.tafewallet.adapters
 
+import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -8,15 +9,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.models.Account
+import com.yuan.tafewallet.models.PaperCutAccount
+import com.yuan.tafewallet.models.PaperCutAccountManager
 
 
-class TopupSelectAccountTableViewAdapter(val clickListener: TopupSelectAccountTableViewClickListener)
+class TopupSelectAccountTableViewAdapter(val context: Context, val clickListener: TopupSelectAccountTableViewClickListener)
     : RecyclerView.Adapter<TopupSelectAccountViewHolder>() {
-
-    private var account = Account("Primary account", "$8.95")
+    val paperCutAccount = PaperCutAccountManager(context).readPrimaryAccount()
 
     interface TopupSelectAccountTableViewClickListener {
-        fun listItemClicked(account: Account)
+        fun listItemClicked(account: PaperCutAccount)
     }
 
     override fun onCreateViewHolder(
@@ -35,10 +37,10 @@ class TopupSelectAccountTableViewAdapter(val clickListener: TopupSelectAccountTa
     override fun onBindViewHolder(holder: TopupSelectAccountViewHolder, position: Int) {
         when (position) {
             0 -> {
-                holder.accountName.text = account.accountName
-                holder.accountBalance.text = account.accountBalance
+                holder.accountName.text = paperCutAccount.AccountName
+                holder.accountBalance.text = "$" + "%.2f".format(paperCutAccount.Balance)
                 holder.itemView.setOnClickListener {
-                    clickListener.listItemClicked(account)
+                    clickListener.listItemClicked(paperCutAccount)
                 }
             }
             else -> {

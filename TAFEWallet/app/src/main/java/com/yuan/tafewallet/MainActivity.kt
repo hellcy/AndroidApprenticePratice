@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -113,5 +114,13 @@ class MainActivity : AppCompatActivity() {
         for (i in 0 until supportFragmentManager.backStackEntryCount) {
             supportFragmentManager.popBackStack()
         }
+    }
+
+    fun showAlert() {
+        val alert = AlertDialog.Builder(this@MainActivity)
+        alert.setTitle("Whoops...")
+            .setMessage("Action failed, please try again later")
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
     }
 }

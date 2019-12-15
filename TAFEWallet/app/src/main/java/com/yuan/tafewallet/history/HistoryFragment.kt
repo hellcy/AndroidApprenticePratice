@@ -49,7 +49,7 @@ class HistoryFragment : Fragment(), HistorySelectAccountTableViewAdapter.History
             activity.supportActionBar!!.hide()
             activity.nav_view.isVisible = true
         }
-        savedPaperCutAccounts = paperCutAccountManager.readPaperCutAccounts()
+        savedPaperCutAccounts = paperCutAccountManager.readPaperCutAccounts()!!
 
         val view = inflater.inflate(R.layout.fragment_history, container, false)
         view.HistoryAccountTable.adapter = HistorySelectAccountTableViewAdapter(savedPaperCutAccounts, this)

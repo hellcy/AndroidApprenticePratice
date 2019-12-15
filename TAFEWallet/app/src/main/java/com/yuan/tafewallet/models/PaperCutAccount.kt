@@ -54,12 +54,12 @@ class PaperCutAccountManager(val context: Context) {
         sharedPreferences.apply()
     }
 
-    fun readPaperCutAccounts(): ArrayList<PaperCutAccount> {
+    fun readPaperCutAccounts(): ArrayList<PaperCutAccount>? {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-        val json = sharedPreferences.getString("PaperCutAccount", "")
-
-        return Gson().fromJson(json, object: TypeToken<ArrayList<PaperCutAccount>>(){}.type)
+        val json = sharedPreferences.getString("PaperCutAccount", null)
+        if (json == null) return null
+        else return Gson().fromJson(json, object: TypeToken<ArrayList<PaperCutAccount>>(){}.type)
     }
 
     fun savePrimaryAccount(paperCutAccounts: ArrayList<PaperCutAccount>) {

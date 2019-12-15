@@ -2,6 +2,7 @@ package com.yuan.tafewallet.topup
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,18 +14,20 @@ import com.yuan.tafewallet.MainActivity
 
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.TopupSelectCardTableViewAdapter
-import com.yuan.tafewallet.models.Account
-import com.yuan.tafewallet.models.WestpacAccount
-import com.yuan.tafewallet.models.WestpacAccountManager
+import com.yuan.tafewallet.models.*
+import com.yuan.tafewallet.service.GetAccountTokensRequestBody
+import com.yuan.tafewallet.service.GetAccountTokensService
+import com.yuan.tafewallet.service.GetPaperCutAccountsRequestBody
+import com.yuan.tafewallet.service.GetPaperCutAccountsService
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_topup_select_card.view.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class TopupSelectCardFragment : Fragment(), TopupSelectCardTableViewAdapter.TopupSelectCardTableViewClickListener {
-    lateinit var account: Account
+    lateinit var account: PaperCutAccount
     var amount: Int = 0
-    private var westpacAccount = WestpacAccount("CREDIT_CARD", "TAFEOP353887960", true,"444433...111","03",
-        "22","VISA","CREDIT","yuan","444433...1111")
-    var westpacAccounts = ArrayList<WestpacAccount>()
     lateinit var savedAccounts: ArrayList<WestpacAccount>
     lateinit var westpacAccountManager: WestpacAccountManager
 
@@ -38,9 +41,8 @@ class TopupSelectCardFragment : Fragment(), TopupSelectCardTableViewAdapter.Topu
 
         account = arguments?.getParcelable("Account")!!
         amount = arguments?.getInt("Amount")!!
-        westpacAccounts.add(westpacAccount)
-        westpacAccountManager.saveWestpacAccount(westpacAccounts)
-
+        getAccountTokens()
+        savedAccounts = westpacAccountManager.readWestpacAccounts()
     }
 
     override fun onCreateView(
@@ -54,15 +56,13 @@ class TopupSelectCardFragment : Fragment(), TopupSelectCardTableViewAdapter.Topu
             activity.supportActionBar?.title = "Select Credit/Debit Card"
             activity.nav_view.isVisible = false
         }
-        savedAccounts = westpacAccountManager.readWestpacAccounts()
 
         val view = inflater.inflate(R.layout.fragment_topup_select_card, container, false)
-        view.AccountNameLabel.text = account.accountName
-        view.AccountBalanceLabel.text = account.accountBalance
+        view.AccountNameLabel.text = account.AccountName
+        view.AccountBalanceLabel.text = "$" + "%.2f".format(account.Balance)
         view.UseNewCardButton.setOnClickListener { v ->
             useNewCardButtonPressed()
         }
-
         view.topupSelectCardTable.adapter = TopupSelectCardTableViewAdapter(savedAccounts, this)
         view.topupSelectCardTable.layoutManager = LinearLayoutManager(activity)
 
@@ -81,10 +81,37 @@ class TopupSelectCardFragment : Fragment(), TopupSelectCardTableViewAdapter.Topu
         (activity as MainActivity).gotoFragment(fragment, TopupNewCardFragment.TAG)
     }
 
+    fun getAccountTokens() {
+        val unicardAccountManager = UnicardAccountManager(context!!)
+
+        val getAccountTokensService = GetAccountTokensService.instance
+        val requestBody = GetAccountTokensRequestBody(unicardAccountManager.readUnicardAccount().QuickStreamID!!)
+        val request = getAccountTokensService.getAccountTokens(requestBody)
+
+        request.enqueue(object : Callback<ArrayList<WestpacAccount>> {
+            override fun onFailure(call: Call<ArrayList<WestpacAccount>>, t: Throwable) {
+                Log.i(TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<WestpacAccount>>,
+                response: Response<ArrayList<WestpacAccount>>
+            ) {
+                Log.i(TAG, "Got response with status code " + "${response?.code()} and message " + "${response?.message()}")
+                if (response.isSuccessful) {
+                    westpacAccountManager.saveWestpacAccount(response?.body()!!) // save to global objects
+                    Log.i(TAG, "get westpac account tokens response body " + "${westpacAccountManager.readWestpacAccounts()}")
+                } else {
+                    (activity as MainActivity).showAlert()
+                }
+            }
+        })
+    }
+
     companion object {
         val TAG = TopupSelectCardFragment::class.java.simpleName
         @JvmStatic
-        fun newInstance(account: Account, amount: Int): TopupSelectCardFragment {
+        fun newInstance(account: PaperCutAccount, amount: Int): TopupSelectCardFragment {
             val fragment = TopupSelectCardFragment()
             val args = Bundle()
             args.putParcelable("Account", account)

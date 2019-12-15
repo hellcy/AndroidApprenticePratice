@@ -1,8 +1,7 @@
 package com.yuan.tafewallet.topup
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,29 +10,34 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.yuan.tafewallet.adapters.TopupCardDetailsTableViewAdapter
-import com.yuan.tafewallet.models.Account
 import com.yuan.tafewallet.models.WestpacAccount
 import kotlinx.android.synthetic.main.fragment_topup_confirm.view.*
 import android.text.style.UnderlineSpan
 import android.text.SpannableString
-import androidx.appcompat.app.AppCompatDialogFragment
+import android.util.Log
 import androidx.core.view.isVisible
-import com.yuan.tafewallet.DatePickerFragment
-import com.yuan.tafewallet.MainActivity
-import com.yuan.tafewallet.PopupMeaningFragment
-import com.yuan.tafewallet.PopupTermsFragment
+import com.yuan.tafewallet.*
+import com.yuan.tafewallet.models.PaperCutAccount
+import com.yuan.tafewallet.models.UnicardAccountManager
+import com.yuan.tafewallet.models.WestpacTransaction
+import com.yuan.tafewallet.service.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_history_transactions.view.*
 import kotlinx.android.synthetic.main.fragment_topup_confirm.view.AccountBalanceLabel
 import kotlinx.android.synthetic.main.fragment_topup_confirm.view.AccountNameLabel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class TopupConfirmFragment : Fragment() {
-    lateinit var account: Account
+    lateinit var account: PaperCutAccount
     lateinit var westpacAccount: WestpacAccount
+    var westpacTransaction = WestpacTransaction()
+    var registeredWestpacAccount = WestpacAccount()
     var secretToken: String? = null
     var amount: Int = 0
     var saveCard: Boolean = false
+    val progressBar = CustomProgressBar()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +61,8 @@ class TopupConfirmFragment : Fragment() {
         }
 
         val view = inflater.inflate(com.yuan.tafewallet.R.layout.fragment_topup_confirm, container, false)
-        view.AccountNameLabel.text = account.accountName
-        view.AccountBalanceLabel.text = account.accountBalance
+        view.AccountNameLabel.text = account.AccountName
+        view.AccountBalanceLabel.text = "$" + "%.2f".format(account.Balance)
         view.Amount.text = "$" + "%.2f".format(amount.toDouble())
 
         if (secretToken == null) {
@@ -81,7 +85,6 @@ class TopupConfirmFragment : Fragment() {
             newFragment.show(dialogFragmentTransaction!!, "dialog")
         }
 
-        saveCard = view.saveCardBox.isChecked
         view.ConfirmButton.setOnClickListener { v ->
             confirmButtonPressed() }
 
@@ -92,14 +95,124 @@ class TopupConfirmFragment : Fragment() {
 
     private fun confirmButtonPressed() {
         // TODO: use saveCard boolean
-        val fragment = TopupCompleteFragment.newInstance(account, amount)
-        (activity as MainActivity).gotoFragment(fragment, TopupCompleteFragment.TAG)
+        progressBar.show(context!!,"Transaction in progress... \nPlease do not close or exit this application")
+
+        if (secretToken != null) {
+            // use new card
+            performTopupBySingleUseToken()
+        } else {
+            // use saved card
+            performTopupByAccountToken()
+        }
+//        Handler().postDelayed({
+//            progressBar.dialog.dismiss()
+//
+//            val fragment = TopupCompleteFragment.newInstance(account, amount)
+//            (activity as MainActivity).gotoFragment(fragment, TopupCompleteFragment.TAG)
+//        }, 1000)
+    }
+
+    fun performTopupByAccountToken() {
+        val unicardAccountManager = UnicardAccountManager(context!!)
+
+        val processTopupTransactionService = ProcessTopupTransactionService.instance
+        val requestBody = TopupByAccountTokenRequestBody(westpacAccount.accountToken, amount.toString(), unicardAccountManager.readUnicardAccount().UnicardID, unicardAccountManager.readUnicardAccount().PaperCutID)
+        val request = processTopupTransactionService.topupByAccountToken(requestBody)
+
+        request.enqueue(object : Callback<WestpacTransaction> {
+            override fun onFailure(call: Call<WestpacTransaction>, t: Throwable) {
+                Log.i(TopupSelectCardFragment.TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+            }
+
+            override fun onResponse(
+                call: Call<WestpacTransaction>,
+                response: Response<WestpacTransaction>
+            ) {
+                Log.i(TopupSelectCardFragment.TAG, "Got response with status code " + "${response?.code()} and message " + "${response?.message()}")
+                if (response.isSuccessful) {
+                    westpacTransaction = response?.body()!!
+                    Log.i(TopupSelectCardFragment.TAG, "topup by account token Westpac transaction response body " + westpacTransaction)
+                    progressBar.dialog.dismiss()
+                    val fragment = TopupCompleteFragment.newInstance(account, amount, westpacTransaction, westpacAccount)
+                    (activity as MainActivity).gotoFragment(fragment, TopupCompleteFragment.TAG)
+                } else {
+                    (activity as MainActivity).showAlert()
+                    progressBar.dialog.dismiss()
+                }
+
+            }
+        })
+    }
+
+    fun performTopupBySingleUseToken() {
+        val unicardAccountManager = UnicardAccountManager(context!!)
+
+        val processTopupTransactionService = ProcessTopupTransactionService.instance
+        val requestBody = TopupBySingleUseTokenRequestBody(secretToken!!, amount.toString(), unicardAccountManager.readUnicardAccount().UnicardID, "", unicardAccountManager.readUnicardAccount().PaperCutID)
+        val request = processTopupTransactionService.topupBySingleUseToken(requestBody)
+
+        request.enqueue(object : Callback<WestpacTransaction> {
+            override fun onFailure(call: Call<WestpacTransaction>, t: Throwable) {
+                Log.i(TopupSelectCardFragment.TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+            }
+
+            override fun onResponse(
+                call: Call<WestpacTransaction>,
+                response: Response<WestpacTransaction>
+            ) {
+                Log.i(TopupSelectCardFragment.TAG, "Got response with status code " + "${response?.code()} and message " + "${response?.message()}")
+                if (response.isSuccessful) {
+                    westpacTransaction = response?.body()!!
+                    Log.i(TopupSelectCardFragment.TAG, "topup by single use token Westpac transaction response body " + westpacTransaction)
+                    performRegisterAccount(unicardAccountManager.readUnicardAccount().QuickStreamID!!, westpacTransaction.receiptNumber)
+                } else {
+                    (activity as MainActivity).showAlert()
+                    progressBar.dialog.dismiss()
+                }
+            }
+        })
+    }
+
+    fun performRegisterAccount(quickStreamID: String, receiptNumber: String) {
+        saveCard = view?.saveCardBox?.isChecked!!
+        if (saveCard) {
+            val registerAccountService = RegisterAccountService.instance
+            val requestBody = RegisterAccountRequestBody(quickStreamID, receiptNumber)
+            val request = registerAccountService.registerAccount(requestBody)
+
+            request.enqueue(object : Callback<WestpacAccount> {
+                override fun onFailure(call: Call<WestpacAccount>, t: Throwable) {
+                    Log.i(TopupSelectCardFragment.TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+                }
+
+                override fun onResponse(
+                    call: Call<WestpacAccount>,
+                    response: Response<WestpacAccount>
+                ) {
+                    Log.i(TopupSelectCardFragment.TAG, "Got response with status code " + "${response?.code()} and message " + "${response?.message()}")
+                    if (response.isSuccessful) {
+                        registeredWestpacAccount = response?.body()!!
+                        Log.i(TopupSelectCardFragment.TAG, "register Westpac account response body " + registeredWestpacAccount)
+                        progressBar.dialog.dismiss()
+                        val fragment = TopupCompleteFragment.newInstance(account, amount, westpacTransaction, westpacAccount)
+                        (activity as MainActivity).gotoFragment(fragment, TopupCompleteFragment.TAG)
+                    } else {
+                        (activity as MainActivity).showAlert()
+                        progressBar.dialog.dismiss()
+                    }
+                }
+            })
+        } else {
+            progressBar.dialog.dismiss()
+            val fragment = TopupCompleteFragment.newInstance(account, amount, westpacTransaction, westpacAccount)
+            (activity as MainActivity).gotoFragment(fragment, TopupCompleteFragment.TAG)
+        }
     }
 
     companion object {
         val TAG = TopupConfirmFragment::class.java.simpleName
         @JvmStatic
-        fun newInstance(account: Account, westpacAccount: WestpacAccount, amount: Int, secretToken: String?): TopupConfirmFragment {
+        fun newInstance(account: PaperCutAccount, westpacAccount: WestpacAccount, amount: Int, secretToken: String?): TopupConfirmFragment {
             val fragment = TopupConfirmFragment()
             val args = Bundle()
             args.putParcelable("Account", account)

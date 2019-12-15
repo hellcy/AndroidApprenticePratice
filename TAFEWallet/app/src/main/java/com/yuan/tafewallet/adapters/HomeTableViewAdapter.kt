@@ -1,5 +1,6 @@
 package com.yuan.tafewallet.adapters
 
+import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -7,8 +8,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.yuan.tafewallet.R
+import com.yuan.tafewallet.models.PaperCutAccountManager
 
-class HomeTableViewAdapter : RecyclerView.Adapter<HomeTableViewHolder>() {
+class HomeTableViewAdapter(context: Context) : RecyclerView.Adapter<HomeTableViewHolder>() {
+    val paperCutAccountManager = PaperCutAccountManager(context)
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeTableViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.view_holder_home_table, parent, false)
 
@@ -23,11 +27,11 @@ class HomeTableViewAdapter : RecyclerView.Adapter<HomeTableViewHolder>() {
         when (position) {
             0 -> {
                 holder.cellTitle.text = "Username"
-                holder.cellDetail.text = "a8000761"
+                holder.cellDetail.text = paperCutAccountManager.readPrimaryAccount().UserName
             }
             1 -> {
                 holder.cellTitle.text = "Name"
-                holder.cellDetail.text = "Yuan Cheng"
+                holder.cellDetail.text = paperCutAccountManager.readPrimaryAccount().FullName
             }
             else -> {
                 print("home table view index out of range")

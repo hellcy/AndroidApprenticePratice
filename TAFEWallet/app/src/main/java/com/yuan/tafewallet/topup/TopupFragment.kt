@@ -13,6 +13,7 @@ import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.TopupSelectAccountTableViewAdapter
 import com.yuan.tafewallet.models.Account
+import com.yuan.tafewallet.models.PaperCutAccount
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_topup.view.*
 
@@ -30,12 +31,12 @@ class TopupFragment : Fragment(), TopupSelectAccountTableViewAdapter.TopupSelect
         }
 
         val view = inflater.inflate(R.layout.fragment_topup, container, false)
-        view.TopUpAccountTable.adapter = TopupSelectAccountTableViewAdapter(this)
+        view.TopUpAccountTable.adapter = TopupSelectAccountTableViewAdapter(context!!, this)
         view.TopUpAccountTable.layoutManager = LinearLayoutManager(activity)
         return view
     }
 
-    override fun listItemClicked(account: Account) {
+    override fun listItemClicked(account: PaperCutAccount) {
         val fragment = TopupSelectAmountFragment.newInstance(account)
         (activity as MainActivity).gotoFragment(fragment, TopupSelectAmountFragment.TAG)
     }

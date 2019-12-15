@@ -13,12 +13,13 @@ import androidx.fragment.app.Fragment
 import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.models.Account
+import com.yuan.tafewallet.models.PaperCutAccount
 import com.yuan.tafewallet.models.WestpacAccount
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_topup_new_card.view.*
 
 class TopupNewCardFragment : Fragment() {
-    lateinit var account: Account
+    lateinit var account: PaperCutAccount
     var amount: Int = 0
     lateinit var secretToken: String
     var westpacAccount = WestpacAccount()
@@ -43,8 +44,8 @@ class TopupNewCardFragment : Fragment() {
 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_topup_new_card, container, false)
-        view.AccountBalanceLabel.text = account.accountBalance
-        view.AccountNameLabel.text = account.accountName
+        view.AccountBalanceLabel.text = "$" + "%.2f".format(account.Balance)
+        view.AccountNameLabel.text = account.AccountName
         view.webView.loadUrl("https://s3-ap-southeast-2.amazonaws.com/paymentapi.westpac.trustedframe/westpacTrustedFrame.html")
         view.webView.settings.javaScriptEnabled = true
         view.webView.settings.saveFormData = false
@@ -56,7 +57,7 @@ class TopupNewCardFragment : Fragment() {
     companion object {
         val TAG = TopupNewCardFragment::class.java.simpleName
         @JvmStatic
-        fun newInstance(account: Account, amount: Int): TopupNewCardFragment {
+        fun newInstance(account: PaperCutAccount, amount: Int): TopupNewCardFragment {
             val fragment = TopupNewCardFragment()
             val args = Bundle()
             args.putParcelable("Account", account)

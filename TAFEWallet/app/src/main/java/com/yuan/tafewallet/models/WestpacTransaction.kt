@@ -3,13 +3,14 @@ package com.yuan.tafewallet.models
 import android.content.Context
 import android.os.Parcel
 import android.os.Parcelable
+import android.view.MotionEvent
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.Serializable
 
-data class WestpacTransaction(var transactionType: String, var transactionTime: String, var status: String, var receiptNumber: String,
-                              var totalAmount: Money, var creditCard: CreditCard, var refundableAmount: String?, var updatedBalance: String?)
+data class WestpacTransaction(var transactionType: String = "", var transactionTime: String = "", var status: String = "", var receiptNumber: String = "",
+                              var totalAmount: Money = Money(), var creditCard: CreditCard = CreditCard(), var refundableAmount: String? = "", var updatedBalance: String? = "")
     : Serializable, Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
@@ -48,7 +49,7 @@ data class WestpacTransaction(var transactionType: String, var transactionTime: 
     }
 }
 
-data class Money(var currency: String, var amount: Double): Serializable, Parcelable {
+data class Money(var currency: String = "", var amount: Double = 0.0): Serializable, Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readDouble()
@@ -74,8 +75,8 @@ data class Money(var currency: String, var amount: Double): Serializable, Parcel
     }
 }
 
-data class CreditCard(var cardScheme: String, var cardType: String, var cardNumber: String, var cardholderName: String,
-                      var expiryDateMonth: String, var expiryDateYear: String, var accountToken: String): Serializable, Parcelable {
+data class CreditCard(var cardScheme: String = "", var cardType: String = "", var cardNumber: String = "", var cardholderName: String = "",
+                      var expiryDateMonth: String = "", var expiryDateYear: String = "", var accountToken: String? = ""): Serializable, Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readString()!!,

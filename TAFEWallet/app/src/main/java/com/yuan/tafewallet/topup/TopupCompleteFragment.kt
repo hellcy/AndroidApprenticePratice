@@ -1,6 +1,7 @@
 package com.yuan.tafewallet.topup
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,27 +14,29 @@ import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.TopupTransactionCompleteTableViewAdapter
 import com.yuan.tafewallet.models.*
+import com.yuan.tafewallet.service.GetPaperCutAccountBalanceService
+import com.yuan.tafewallet.service.GetPaperCutAccountsRequestBody
+import com.yuan.tafewallet.service.ProcessTopupTransactionService
+import com.yuan.tafewallet.service.TopupBySingleUseTokenRequestBody
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_topup_complete.view.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class TopupCompleteFragment : Fragment() {
-    lateinit var account: Account
+    lateinit var account: PaperCutAccount
     var amount: Int = 0
-
-    // sample data
     lateinit var westpacTransaction: WestpacTransaction
-    lateinit var money: Money
-    lateinit var creditCard: CreditCard
+    lateinit var westpacAccount: WestpacAccount
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         account = arguments?.getParcelable("Account")!!
         amount = arguments?.getInt("Amount")!!
-
-        money = Money("AUD", 10.0)
-        creditCard = CreditCard("VISA", "CREDIT", "424242...242", "Yuan Test", "09", "22", "TAFE12345678")
-        westpacTransaction = WestpacTransaction("PAYMENT", "DateTime", "Approved", "123456", money, creditCard, null, null)
-    }
+        westpacTransaction = arguments?.getParcelable("WestpacTransaction")!!
+        westpacAccount = arguments?.getParcelable("WestpacAccount")!!
+}
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,10 +51,16 @@ class TopupCompleteFragment : Fragment() {
         }
 
         val view = inflater.inflate(R.layout.fragment_topup_complete, container, false)
-        view.AccountNameLabel.text = account.accountName
-        view.AccountBalanceLabel.text = account.accountBalance
+        var updatedBalance = account.Balance
+        if (westpacTransaction.status == "Approved") {
+            updatedBalance += amount
+        }
+        view.AccountNameLabel.text = account.AccountName
+        view.AccountBalanceLabel.text = "$" + "%.2f".format(updatedBalance)
+        retrievePaperCutAccountBalance()
         view.DoneButton.setOnClickListener { v ->
             doneButtonPressed() }
+
 
         view.topupTransactionCompleteTable.adapter = TopupTransactionCompleteTableViewAdapter(westpacTransaction)
         view.topupTransactionCompleteTable.layoutManager = LinearLayoutManager(activity)
@@ -65,14 +74,43 @@ class TopupCompleteFragment : Fragment() {
         (activity as MainActivity).setFragment(fragment)
     }
 
+    fun retrievePaperCutAccountBalance() {
+        val paperCutAccountManager = PaperCutAccountManager(context!!)
+        val getPaperCutAccountBalanceService = GetPaperCutAccountBalanceService.instance
+        val requestBody = GetPaperCutAccountsRequestBody(account.AccountName!!)
+        val request = getPaperCutAccountBalanceService.getPaperCutAccounts(requestBody)
+
+        request.enqueue(object : Callback<ArrayList<PaperCutAccount>> {
+            override fun onFailure(call: Call<ArrayList<PaperCutAccount>>, t: Throwable) {
+                Log.i(TopupSelectCardFragment.TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<PaperCutAccount>>,
+                response: Response<ArrayList<PaperCutAccount>>
+            ) {
+                Log.i(TopupSelectCardFragment.TAG, "Got response with status code " + "${response?.code()} and message " + "${response?.message()}")
+                if (response.isSuccessful) {
+                    paperCutAccountManager.savePaperCutAccount(response?.body()!!)
+                    paperCutAccountManager.savePrimaryAccount(response?.body()!!)
+                    Log.i(TopupSelectCardFragment.TAG, "get papercut account balance response body " + paperCutAccountManager.readPaperCutAccounts())
+                } else {
+                    (activity as MainActivity).showAlert()
+                }
+            }
+        })
+    }
+
     companion object {
         val TAG = TopupCompleteFragment::class.java.simpleName
         @JvmStatic
-        fun newInstance(account: Account, amount: Int): TopupCompleteFragment {
+        fun newInstance(account: PaperCutAccount, amount: Int, westpacTransaction: WestpacTransaction, westpacAccount: WestpacAccount): TopupCompleteFragment {
             val fragment = TopupCompleteFragment()
             val args = Bundle()
             args.putParcelable("Account", account)
             args.putInt("Amount", amount)
+            args.putParcelable("WestpacTransaction", westpacTransaction)
+            args.putParcelable("WestpacAccount", westpacAccount)
             fragment.arguments = args
             return fragment
         }

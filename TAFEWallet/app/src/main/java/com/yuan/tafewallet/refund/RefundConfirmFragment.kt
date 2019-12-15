@@ -62,7 +62,6 @@ class RefundConfirmFragment : Fragment(), RefundConfirmTableViewAdapter.RefundCo
     }
 
     private fun confirmRefundButtonPressed() {
-        //view?.progressBar?.isVisible = true
         progressBar.show(context!!,"Refund in progress... \nPlease do not close or exit this application")
 
         Handler().postDelayed({

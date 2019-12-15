@@ -15,12 +15,13 @@ import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.TopupCardDetailsTableViewAdapter
 import com.yuan.tafewallet.models.Account
+import com.yuan.tafewallet.models.PaperCutAccount
 import com.yuan.tafewallet.models.WestpacAccount
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_topup_card_details.view.*
 
 class TopupCardDetailsFragment : Fragment() {
-    lateinit var account: Account
+    lateinit var account: PaperCutAccount
     lateinit var westpacAccount: WestpacAccount
     var amount: Int = 0
 
@@ -45,8 +46,8 @@ class TopupCardDetailsFragment : Fragment() {
         }
 
         val view = inflater.inflate(R.layout.fragment_topup_card_details, container, false)
-        view.AccountBalanceLabel.text = account.accountBalance
-        view.AccountNameLabel.text = account.accountName
+        view.AccountBalanceLabel.text = "$" + "%.2f".format(account.Balance)
+        view.AccountNameLabel.text = account.AccountName
         view.ContinueButton.setOnClickListener { v ->
             continueButtonPressed() }
 
@@ -65,7 +66,7 @@ class TopupCardDetailsFragment : Fragment() {
     companion object {
         val TAG = TopupCardDetailsFragment::class.java.simpleName
         @JvmStatic
-        fun newInstance(account: Account, westpacAccount: WestpacAccount, amount: Int): TopupCardDetailsFragment {
+        fun newInstance(account: PaperCutAccount, westpacAccount: WestpacAccount, amount: Int): TopupCardDetailsFragment {
             val fragment = TopupCardDetailsFragment()
             val args = Bundle()
             args.putParcelable("Account", account)
