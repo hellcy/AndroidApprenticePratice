@@ -2,7 +2,6 @@ package com.yuan.tafewallet.history
 
 import android.app.Activity
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
@@ -18,22 +17,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.yuan.tafewallet.DatePickerFragment
 import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
-import com.yuan.tafewallet.adapters.HistorySelectAccountTableViewAdapter
 import com.yuan.tafewallet.adapters.HistoryTransactionsTableViewAdapter
 import com.yuan.tafewallet.models.PaperCutAccount
 import com.yuan.tafewallet.models.Transaction
-import com.yuan.tafewallet.service.GetPaperCutAccountsRequestBody
-import com.yuan.tafewallet.service.GetPaperCutAccountsService
 import com.yuan.tafewallet.service.GetTransactionHistoryRequestBody
 import com.yuan.tafewallet.service.GetTransactionHistoryService
 import com.yuan.tafewallet.topup.TopupFragment
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_history.view.*
 import kotlinx.android.synthetic.main.fragment_history_transactions.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.time.LocalDate
+import java.util.*
+import kotlin.collections.ArrayList
+
 
 class HistoryTransactionsFragment : Fragment(), HistoryTransactionsTableViewAdapter.HistoryTransactionsTableViewClickListener {
     val fromDateCode: Int = 1
@@ -100,12 +97,15 @@ class HistoryTransactionsFragment : Fragment(), HistoryTransactionsTableViewAdap
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         val format = SimpleDateFormat("yyyy-MM-dd")
+        val calendar = Calendar.getInstance()
         if (requestCode == fromDateCode && resultCode == Activity.RESULT_OK) { // get date from string
             selectedDate = data!!.getStringExtra("selectedDate")
             // set the value of the editText
             view?.FromDate?.text = selectedDate
             view?.FromDate?.setTextColor(Color.BLACK)
-            fromDate = format.format(SimpleDateFormat("MM/dd/yyyy").parse(selectedDate))
+            calendar.time = SimpleDateFormat("MM/dd/yyyy").parse(selectedDate)
+            calendar.add(Calendar.DAY_OF_YEAR, -1)
+            fromDate = format.format(calendar.time)
         }
 
         if (requestCode == toDateCode && resultCode == Activity.RESULT_OK) { // get date from string
@@ -113,7 +113,9 @@ class HistoryTransactionsFragment : Fragment(), HistoryTransactionsTableViewAdap
             // set the value of the editText
             view?.ToDate?.text = selectedDate
             view?.ToDate?.setTextColor(Color.BLACK)
-            toDate = format.format(SimpleDateFormat("MM/dd/yyyy").parse(selectedDate))
+            calendar.time = SimpleDateFormat("MM/dd/yyyy").parse(selectedDate)
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
+            toDate = format.format(calendar.time)
         }
     }
 

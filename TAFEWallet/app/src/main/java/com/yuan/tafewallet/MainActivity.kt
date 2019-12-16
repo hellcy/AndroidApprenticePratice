@@ -15,6 +15,8 @@ import com.yuan.tafewallet.home.HomeFragment
 import com.yuan.tafewallet.refund.RefundFragment
 import com.yuan.tafewallet.topup.TopupFragment
 import android.app.Activity
+import android.content.Context
+import com.yuan.tafewallet.dagger.AppComponent
 import com.yuan.tafewallet.refund.RefundCompleteFragment
 import com.yuan.tafewallet.topup.TopupCompleteFragment
 

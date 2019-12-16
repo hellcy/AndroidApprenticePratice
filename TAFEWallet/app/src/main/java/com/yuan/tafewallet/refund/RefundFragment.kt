@@ -8,12 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.yuan.tafewallet.CustomProgressBar
 import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
+import com.yuan.tafewallet.TAFEWalletApplication
 import com.yuan.tafewallet.adapters.HistoryTransactionsTableViewAdapter
 import com.yuan.tafewallet.history.HistoryTransactionsFragment
 import com.yuan.tafewallet.models.*
@@ -31,8 +33,11 @@ import kotlinx.android.synthetic.main.fragment_refund_confirm.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
 class RefundFragment : Fragment() {
+    @Inject
+    lateinit var mContext: Context
     lateinit var unicardAccountManager: UnicardAccountManager
     lateinit var paperCutAccountManager: PaperCutAccountManager
     lateinit var primaryAccount: PaperCutAccount
@@ -44,6 +49,7 @@ class RefundFragment : Fragment() {
         super.onAttach(context)
         unicardAccountManager = UnicardAccountManager(context)
         paperCutAccountManager = PaperCutAccountManager(context)
+        (activity?.application as TAFEWalletApplication).mainComponent.injectRefundFragment(this)
     }
 
     override fun onCreateView(
@@ -120,8 +126,12 @@ class RefundFragment : Fragment() {
                 progressBar.dialog.dismiss()
                 Log.i(TopupFragment.TAG, "Got response with status code " + "${response.code()} and message " + response.message())
                 if (response.isSuccessful) {
-                    if (response.body()?.size == 0) (activity as MainActivity).showAlert()
+                    if (this@RefundFragment == null || !this@RefundFragment.isVisible) {
+                        Toast.makeText(mContext, "Get refund transactions cancelled", Toast.LENGTH_LONG).show()
+                    }
+                    else if (response.body()?.size == 0) (activity as MainActivity).showAlert()
                     else {
+                        progressBar.dialog.dismiss()
                         westpacTransactions = response.body()!!
                         Log.i(TopupFragment.TAG, "get refund transactions response body " + westpacTransactions)
                         val fragment = RefundConfirmFragment.newInstance(westpacTransactions, refundAmount)

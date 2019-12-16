@@ -1,35 +1,42 @@
 package com.yuan.tafewallet.topup
 
+import android.app.Application
+import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import androidx.fragment.app.Fragment
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-
-import com.yuan.tafewallet.adapters.TopupCardDetailsTableViewAdapter
-import com.yuan.tafewallet.models.WestpacAccount
-import kotlinx.android.synthetic.main.fragment_topup_confirm.view.*
-import android.text.style.UnderlineSpan
-import android.text.SpannableString
-import android.util.Log
 import androidx.core.view.isVisible
-import com.yuan.tafewallet.*
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.yuan.tafewallet.CustomProgressBar
+import com.yuan.tafewallet.MainActivity
+import com.yuan.tafewallet.PopupMeaningFragment
+import com.yuan.tafewallet.TAFEWalletApplication
+import com.yuan.tafewallet.adapters.TopupCardDetailsTableViewAdapter
+import com.yuan.tafewallet.dagger.AppComponent
 import com.yuan.tafewallet.models.PaperCutAccount
 import com.yuan.tafewallet.models.UnicardAccountManager
+import com.yuan.tafewallet.models.WestpacAccount
 import com.yuan.tafewallet.models.WestpacTransaction
 import com.yuan.tafewallet.service.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_topup_confirm.view.AccountBalanceLabel
-import kotlinx.android.synthetic.main.fragment_topup_confirm.view.AccountNameLabel
+import kotlinx.android.synthetic.main.fragment_topup_confirm.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
 
 class TopupConfirmFragment : Fragment() {
+    @Inject
+    lateinit var mContext: Context
+
     lateinit var account: PaperCutAccount
     lateinit var westpacAccount: WestpacAccount
     var westpacTransaction = WestpacTransaction()
@@ -38,6 +45,11 @@ class TopupConfirmFragment : Fragment() {
     var amount: Int = 0
     var saveCard: Boolean = false
     val progressBar = CustomProgressBar()
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (activity?.application as TAFEWalletApplication).mainComponent.injectTopupConfirmFragment(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -134,8 +146,12 @@ class TopupConfirmFragment : Fragment() {
                     westpacTransaction = response?.body()!!
                     Log.i(TopupSelectCardFragment.TAG, "topup by account token Westpac transaction response body " + westpacTransaction)
                     progressBar.dialog.dismiss()
-                    val fragment = TopupCompleteFragment.newInstance(account, amount, westpacTransaction, westpacAccount)
-                    (activity as MainActivity).gotoFragment(fragment, TopupCompleteFragment.TAG)
+                    if (this@TopupConfirmFragment != null && this@TopupConfirmFragment.isVisible) {
+                        val fragment = TopupCompleteFragment.newInstance(account, amount, westpacTransaction, westpacAccount)
+                        (activity as MainActivity).gotoFragment(fragment, TopupCompleteFragment.TAG)
+                    } else {
+                        Toast.makeText(mContext, "Top up succeeded", Toast.LENGTH_LONG).show()
+                    }
                 } else {
                     (activity as MainActivity).showAlert()
                     progressBar.dialog.dismiss()

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +17,7 @@ import com.yuan.tafewallet.CustomProgressBar
 import com.yuan.tafewallet.MainActivity
 
 import com.yuan.tafewallet.R
+import com.yuan.tafewallet.TAFEWalletApplication
 import com.yuan.tafewallet.adapters.RefundConfirmTableViewAdapter
 import com.yuan.tafewallet.history.HistoryTransactionsFragment
 import com.yuan.tafewallet.models.PaperCutAccountManager
@@ -25,6 +27,7 @@ import com.yuan.tafewallet.service.GetRefundTransactionService
 import com.yuan.tafewallet.service.GetRefundTransactionsRequestBody
 import com.yuan.tafewallet.service.RefundTransactionRequestBody
 import com.yuan.tafewallet.service.RefundTransactionService
+import com.yuan.tafewallet.topup.TopupCompleteFragment
 import com.yuan.tafewallet.topup.TopupFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_refund.view.*
@@ -32,8 +35,11 @@ import kotlinx.android.synthetic.main.fragment_refund_confirm.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
 class RefundConfirmFragment : Fragment(), RefundConfirmTableViewAdapter.RefundConfirmTableViewClickListener {
+    @Inject
+    lateinit var mContext: Context
     lateinit var transactions: ArrayList<WestpacTransaction>
     var refundedTransactions = ArrayList<WestpacTransaction>()
     var refundedAmount: Double = 0.0
@@ -48,6 +54,8 @@ class RefundConfirmFragment : Fragment(), RefundConfirmTableViewAdapter.RefundCo
         super.onAttach(context)
         unicardAccountManager = UnicardAccountManager(context)
         paperCutAccountManager = PaperCutAccountManager(context)
+        (activity?.application as TAFEWalletApplication).mainComponent.injectRefundConfirmFragment(this)
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -133,9 +141,13 @@ class RefundConfirmFragment : Fragment(), RefundConfirmTableViewAdapter.RefundCo
                     (activity as MainActivity).showAlert()
                 }
                 if (count == 1) {
-                    progressBar.dialog.dismiss()
-                    val fragment = RefundCompleteFragment.newInstance(transactions, refundedAmount, amount, updatedBalance)
-                    (activity as MainActivity).gotoFragment(fragment, RefundCompleteFragment.TAG)
+                    if (this@RefundConfirmFragment != null && this@RefundConfirmFragment.isVisible) {
+                        progressBar.dialog.dismiss()
+                        val fragment = RefundCompleteFragment.newInstance(transactions, refundedAmount, amount, updatedBalance)
+                        (activity as MainActivity).gotoFragment(fragment, RefundCompleteFragment.TAG)
+                    } else {
+                        Toast.makeText(mContext, "Refund succeeded", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
         })
