@@ -13,23 +13,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.HistorySelectAccountTableViewAdapter
-import com.yuan.tafewallet.adapters.TopupSelectAccountTableViewAdapter
 import com.yuan.tafewallet.models.PaperCutAccount
 import com.yuan.tafewallet.models.PaperCutAccountManager
 import com.yuan.tafewallet.models.UnicardAccountManager
-import com.yuan.tafewallet.models.WestpacAccountManager
 import com.yuan.tafewallet.service.GetPaperCutAccountsRequestBody
 import com.yuan.tafewallet.service.GetPaperCutAccountsService
 import com.yuan.tafewallet.topup.TopupFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_history.view.*
-import kotlinx.android.synthetic.main.fragment_topup.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class HistoryFragment : Fragment(), HistorySelectAccountTableViewAdapter.HistorySelectAccountTableViewClickListener {
-    lateinit var unicardAccountManager: UnicardAccountManager
+    private lateinit var unicardAccountManager: UnicardAccountManager
     lateinit var paperCutAccountManager: PaperCutAccountManager
 
     override fun onAttach(context: Context) {
@@ -72,7 +69,7 @@ class HistoryFragment : Fragment(), HistorySelectAccountTableViewAdapter.History
 
         request.enqueue(object : Callback<ArrayList<PaperCutAccount>> {
             override fun onFailure(call: Call<ArrayList<PaperCutAccount>>, t: Throwable) {
-                Log.i(TopupFragment.TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+                Log.i(TopupFragment.TAG, "Call to ${call.request()?.url()} " + "failed with ${t.toString()}")
             }
 
             override fun onResponse(

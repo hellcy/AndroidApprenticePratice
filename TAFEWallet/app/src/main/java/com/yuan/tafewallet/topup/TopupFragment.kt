@@ -9,13 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.yuan.tafewallet.MainActivity
-import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.TopupSelectAccountTableViewAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_topup.view.*
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.util.Log
 import com.yuan.tafewallet.models.*
 import com.yuan.tafewallet.service.GetPaperCutAccountsRequestBody
@@ -26,7 +23,7 @@ import retrofit2.Response
 
 
 class TopupFragment : Fragment(), TopupSelectAccountTableViewAdapter.TopupSelectAccountTableViewClickListener {
-    lateinit var unicardAccountManager: UnicardAccountManager
+    private lateinit var unicardAccountManager: UnicardAccountManager
     lateinit var paperCutAccountManager: PaperCutAccountManager
 
     override fun onAttach(context: Context) {
@@ -70,7 +67,7 @@ class TopupFragment : Fragment(), TopupSelectAccountTableViewAdapter.TopupSelect
 
         request.enqueue(object : Callback<ArrayList<PaperCutAccount>> {
             override fun onFailure(call: Call<ArrayList<PaperCutAccount>>, t: Throwable) {
-                Log.i(TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+                Log.i(TAG, "Call to ${call.request()?.url()} " + "failed with $t")
             }
 
             override fun onResponse(

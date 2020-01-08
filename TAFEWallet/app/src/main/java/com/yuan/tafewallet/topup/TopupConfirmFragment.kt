@@ -1,8 +1,6 @@
 package com.yuan.tafewallet.topup
 
-import android.app.Application
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
@@ -20,7 +18,6 @@ import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.PopupMeaningFragment
 import com.yuan.tafewallet.TAFEWalletApplication
 import com.yuan.tafewallet.adapters.TopupCardDetailsTableViewAdapter
-import com.yuan.tafewallet.dagger.AppComponent
 import com.yuan.tafewallet.models.*
 import com.yuan.tafewallet.service.*
 import kotlinx.android.synthetic.main.activity_main.*
@@ -79,7 +76,7 @@ class TopupConfirmFragment : Fragment() {
         val view = inflater.inflate(com.yuan.tafewallet.R.layout.fragment_topup_confirm, container, false)
         view.AccountNameLabel.text = account.AccountName
         view.AccountBalanceLabel.text = (activity as MainActivity).convertDollarSign(account.Balance)
-        view.Amount.text = (activity as MainActivity).convertDollarSign(amount.toDouble())
+        view.Amount.text = activity.convertDollarSign(amount.toDouble())
 
         if (secretToken == null) {
             view.meaningLabel.isVisible = false
@@ -89,19 +86,19 @@ class TopupConfirmFragment : Fragment() {
         val text = "What does it mean?"
         val content = SpannableString(text)
         content.setSpan(UnderlineSpan(), 0, text.length, 0)
-        view.meaningLabel.setText(content)
+        view.meaningLabel.text = content
         view.meaningLabel.setOnClickListener {
             val newFragment = PopupMeaningFragment()
-            val dialogFragmentTransaction = activity!!.supportFragmentManager.beginTransaction()
-            val prev = activity!!.supportFragmentManager.findFragmentByTag("dialog")
+            val dialogFragmentTransaction = activity.supportFragmentManager.beginTransaction()
+            val prev = activity.supportFragmentManager.findFragmentByTag("dialog")
             if (prev != null) {
                 dialogFragmentTransaction.remove(prev)
             }
             dialogFragmentTransaction.addToBackStack(null)
-            newFragment.show(dialogFragmentTransaction!!, "dialog")
+            newFragment.show(dialogFragmentTransaction, "dialog")
         }
 
-        view.ConfirmButton.setOnClickListener { v ->
+        view.ConfirmButton.setOnClickListener {
             confirmButtonPressed() }
 
         view.topupConfirmCardDetailsTable.adapter = TopupCardDetailsTableViewAdapter(westpacAccount)
@@ -124,7 +121,7 @@ class TopupConfirmFragment : Fragment() {
         }
     }
 
-    fun createQuickStreamAccount() {
+    private fun createQuickStreamAccount() {
         val email = if (paperCutAccountManager.readPrimaryAccount().Email == null) "" else paperCutAccountManager.readPrimaryAccount().Email!!
         val createQuickStreamAccountService = CreateQuickStreamAccountService.instance
         val requestBody = CreateQuickStreamAccountRequestBody(unicardAccountManager.readUnicardAccount().UnicardID,
@@ -135,16 +132,16 @@ class TopupConfirmFragment : Fragment() {
 
         request.enqueue(object : Callback<String> {
             override fun onFailure(call: Call<String>, t: Throwable) {
-                Log.i(TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+                Log.i(TAG, "Call to ${call.request()?.url()} " + "failed with $t")
             }
 
             override fun onResponse(
                 call: Call<String>,
                 response: Response<String>
             ) {
-                Log.i(TAG, "Got response with status code " + "${response?.code()} and message " + "${response?.message()}")
+                Log.i(TAG, "Got response with status code " + "${response.code()} and message " + "${response.message()}")
                 if (response.isSuccessful) {
-                    quickStreamID = response?.body()!!
+                    quickStreamID = response.body()!!
                     Log.i(TAG, "get paperCutAccounts response body " + quickStreamID)
 
                     updateUnicardAccount()
@@ -168,21 +165,21 @@ class TopupConfirmFragment : Fragment() {
 
         request.enqueue(object : Callback<ArrayList<UnicardAccount>> {
             override fun onFailure(call: Call<ArrayList<UnicardAccount>>, t: Throwable) {
-                Log.i(TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+                Log.i(TAG, "Call to ${call.request()?.url()} " + "failed with $t")
             }
 
             override fun onResponse(
                 call: Call<ArrayList<UnicardAccount>>,
                 response: Response<ArrayList<UnicardAccount>>
             ) {
-                Log.i(TAG, "Got response with status code " + "${response?.code()} and message " + "${response?.message()}")
+                Log.i(TAG, "Got response with status code " + "${response.code()} and message " + "$response?.message()")
                 if (response.isSuccessful) {
-                    if (response?.body()?.size == 0) {
+                    if (response.body()?.size == 0) {
                         (activity as MainActivity).showAlert()
                         progressBar.dialog.dismiss()
                     }
                     else {
-                        unicardAccountManager.saveUnicardAccount(response?.body()!![0]) // save to global objects
+                        unicardAccountManager.saveUnicardAccount(response.body()!![0]) // save to global objects
                         Log.i(TAG, "update Unicard Account response body " + "${unicardAccountManager.readUnicardAccount()}")
 
                         if (secretToken != null) {
@@ -210,19 +207,19 @@ class TopupConfirmFragment : Fragment() {
 
         request.enqueue(object : Callback<WestpacTransaction> {
             override fun onFailure(call: Call<WestpacTransaction>, t: Throwable) {
-                Log.i(TopupSelectCardFragment.TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+                Log.i(TopupSelectCardFragment.TAG, "Call to ${call.request()?.url()} " + "failed with $t")
             }
 
             override fun onResponse(
                 call: Call<WestpacTransaction>,
                 response: Response<WestpacTransaction>
             ) {
-                Log.i(TopupSelectCardFragment.TAG, "Got response with status code " + "${response?.code()} and message " + "${response?.message()}")
+                Log.i(TopupSelectCardFragment.TAG, "Got response with status code " + "${response.code()} and message " + "$response?.message()")
                 if (response.isSuccessful) {
-                    westpacTransaction = response?.body()!!
+                    westpacTransaction = response.body()!!
                     Log.i(TopupSelectCardFragment.TAG, "topup by account token Westpac transaction response body " + westpacTransaction)
                     progressBar.dialog.dismiss()
-                    if (this@TopupConfirmFragment != null && this@TopupConfirmFragment.isVisible) {
+                    if (this@TopupConfirmFragment.isVisible) {
                         val fragment = TopupCompleteFragment.newInstance(account, amount, westpacTransaction, westpacAccount)
                         (activity as MainActivity).gotoFragment(fragment, TopupCompleteFragment.TAG)
                     } else {
@@ -246,16 +243,16 @@ class TopupConfirmFragment : Fragment() {
 
         request.enqueue(object : Callback<WestpacTransaction> {
             override fun onFailure(call: Call<WestpacTransaction>, t: Throwable) {
-                Log.i(TopupSelectCardFragment.TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+                Log.i(TopupSelectCardFragment.TAG, "Call to ${call.request()?.url()} " + "failed with $t")
             }
 
             override fun onResponse(
                 call: Call<WestpacTransaction>,
                 response: Response<WestpacTransaction>
             ) {
-                Log.i(TopupSelectCardFragment.TAG, "Got response with status code " + "${response?.code()} and message " + "${response?.message()}")
+                Log.i(TopupSelectCardFragment.TAG, "Got response with status code " + "${response.code()} and message " + "$response?.message()")
                 if (response.isSuccessful) {
-                    westpacTransaction = response?.body()!!
+                    westpacTransaction = response.body()!!
                     Log.i(TopupSelectCardFragment.TAG, "topup by single use token Westpac transaction response body " + westpacTransaction)
                     performRegisterAccount(unicardAccountManager.readUnicardAccount().QuickStreamID!!, westpacTransaction.receiptNumber)
                 } else {
@@ -275,16 +272,16 @@ class TopupConfirmFragment : Fragment() {
 
             request.enqueue(object : Callback<WestpacAccount> {
                 override fun onFailure(call: Call<WestpacAccount>, t: Throwable) {
-                    Log.i(TopupSelectCardFragment.TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+                    Log.i(TopupSelectCardFragment.TAG, "Call to ${call.request()?.url()} " + "failed with ${t.toString()}")
                 }
 
                 override fun onResponse(
                     call: Call<WestpacAccount>,
                     response: Response<WestpacAccount>
                 ) {
-                    Log.i(TopupSelectCardFragment.TAG, "Got response with status code " + "${response?.code()} and message " + "${response?.message()}")
+                    Log.i(TopupSelectCardFragment.TAG, "Got response with status code " + "${response.code()} and message " + "${response?.message()}")
                     if (response.isSuccessful) {
-                        registeredWestpacAccount = response?.body()!!
+                        registeredWestpacAccount = response.body()!!
                         Log.i(TopupSelectCardFragment.TAG, "register Westpac account response body " + registeredWestpacAccount)
                         progressBar.dialog.dismiss()
                         val fragment = TopupCompleteFragment.newInstance(account, amount, westpacTransaction, westpacAccount)

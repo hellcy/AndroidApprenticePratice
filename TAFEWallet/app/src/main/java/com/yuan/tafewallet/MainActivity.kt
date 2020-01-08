@@ -2,7 +2,6 @@ package com.yuan.tafewallet
 
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -10,13 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.yuan.tafewallet.history.HistoryFragment
-import com.yuan.tafewallet.history.HistoryTransactionsFragment
 import com.yuan.tafewallet.home.HomeFragment
 import com.yuan.tafewallet.refund.RefundFragment
 import com.yuan.tafewallet.topup.TopupFragment
-import android.app.Activity
-import android.content.Context
-import com.yuan.tafewallet.dagger.AppComponent
 import com.yuan.tafewallet.refund.RefundCompleteFragment
 import com.yuan.tafewallet.topup.TopupCompleteFragment
 
@@ -94,13 +89,13 @@ class MainActivity : AppCompatActivity() {
         var handled = false
         for (fragment in fragments) {
             if (fragment is TopupCompleteFragment) {
-                handled = (fragment as TopupCompleteFragment).onBackPressed()
+                handled = fragment.onBackPressed()
                 if (handled) {
                     break
                 }
             }
             if (fragment is RefundCompleteFragment) {
-                handled = (fragment as RefundCompleteFragment).onBackPressed()
+                handled = fragment.onBackPressed()
                 if (handled) {
                     break
                 }

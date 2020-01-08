@@ -1,6 +1,5 @@
 package com.yuan.tafewallet.refund
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -16,20 +15,15 @@ import com.yuan.tafewallet.CustomProgressBar
 import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.TAFEWalletApplication
-import com.yuan.tafewallet.adapters.HistoryTransactionsTableViewAdapter
 import com.yuan.tafewallet.history.HistoryTransactionsFragment
 import com.yuan.tafewallet.models.*
 import com.yuan.tafewallet.service.GetRefundTransactionService
 import com.yuan.tafewallet.service.GetRefundTransactionsRequestBody
-import com.yuan.tafewallet.service.GetTransactionHistoryRequestBody
-import com.yuan.tafewallet.service.GetTransactionHistoryService
 import com.yuan.tafewallet.topup.TopupFragment
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_history_transactions.view.*
 import kotlinx.android.synthetic.main.fragment_refund.view.*
 import kotlinx.android.synthetic.main.fragment_refund.view.AccountBalanceLabel
 import kotlinx.android.synthetic.main.fragment_refund.view.AccountNameLabel
-import kotlinx.android.synthetic.main.fragment_refund_confirm.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,7 +32,7 @@ import javax.inject.Inject
 class RefundFragment : Fragment() {
     @Inject
     lateinit var mContext: Context
-    lateinit var unicardAccountManager: UnicardAccountManager
+    private lateinit var unicardAccountManager: UnicardAccountManager
     lateinit var paperCutAccountManager: PaperCutAccountManager
     lateinit var primaryAccount: PaperCutAccount
     var refundAmount: Double = 0.0
@@ -116,7 +110,7 @@ class RefundFragment : Fragment() {
 
         request.enqueue(object : Callback<ArrayList<WestpacTransaction>> {
             override fun onFailure(call: Call<ArrayList<WestpacTransaction>>, t: Throwable) {
-                Log.i(TopupFragment.TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+                Log.i(TopupFragment.TAG, "Call to ${call.request()?.url()} " + "failed with $t")
             }
 
             override fun onResponse(
@@ -126,7 +120,7 @@ class RefundFragment : Fragment() {
                 progressBar.dialog.dismiss()
                 Log.i(TopupFragment.TAG, "Got response with status code " + "${response.code()} and message " + response.message())
                 if (response.isSuccessful) {
-                    if (this@RefundFragment == null || !this@RefundFragment.isVisible) {
+                    if (!this@RefundFragment.isVisible) {
                         Toast.makeText(mContext, "Get refund transactions cancelled", Toast.LENGTH_LONG).show()
                     }
                     else if (response.body()?.size == 0) (activity as MainActivity).showAlert()

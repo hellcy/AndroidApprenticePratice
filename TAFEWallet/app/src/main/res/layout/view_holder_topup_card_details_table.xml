@@ -11,7 +11,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginStart="16dp"
         android:layout_weight="1"
-        android:text="Card Title"
+        android:text="@string/topup_card_title"
         android:textSize="18sp" />
 
     <View
@@ -26,8 +26,8 @@
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="16dp"
         android:layout_weight="1"
-        android:text="Card Details"
-        android:textAlignment="textEnd"
+        android:text="@string/topup_card_details"
+        android:textAlignment= "textEnd"
         android:textSize="18sp"
         android:textStyle="bold" />
 </LinearLayout>

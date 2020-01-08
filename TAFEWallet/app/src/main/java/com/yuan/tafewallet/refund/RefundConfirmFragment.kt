@@ -1,9 +1,7 @@
 package com.yuan.tafewallet.refund
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -19,18 +17,13 @@ import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.TAFEWalletApplication
 import com.yuan.tafewallet.adapters.RefundConfirmTableViewAdapter
-import com.yuan.tafewallet.history.HistoryTransactionsFragment
 import com.yuan.tafewallet.models.PaperCutAccountManager
 import com.yuan.tafewallet.models.UnicardAccountManager
 import com.yuan.tafewallet.models.WestpacTransaction
-import com.yuan.tafewallet.service.GetRefundTransactionService
-import com.yuan.tafewallet.service.GetRefundTransactionsRequestBody
 import com.yuan.tafewallet.service.RefundTransactionRequestBody
 import com.yuan.tafewallet.service.RefundTransactionService
-import com.yuan.tafewallet.topup.TopupCompleteFragment
 import com.yuan.tafewallet.topup.TopupFragment
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_refund.view.*
 import kotlinx.android.synthetic.main.fragment_refund_confirm.view.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -80,7 +73,7 @@ class RefundConfirmFragment : Fragment(), RefundConfirmTableViewAdapter.RefundCo
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_refund_confirm, container, false)
         view.refundAmount.text = (activity as MainActivity).convertDollarSign(amount)
-        view.RefundConfirmButton.setOnClickListener { v ->
+        view.RefundConfirmButton.setOnClickListener {
             confirmRefundButtonPressed(view)
         }
         view.progressBar.isVisible = false
@@ -124,7 +117,7 @@ class RefundConfirmFragment : Fragment(), RefundConfirmTableViewAdapter.RefundCo
 
         request.enqueue(object : Callback<WestpacTransaction> {
             override fun onFailure(call: Call<WestpacTransaction>, t: Throwable) {
-                Log.i(TopupFragment.TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+                Log.i(TopupFragment.TAG, "Call to ${call.request()?.url()} " + "failed with $t")
             }
 
             override fun onResponse(
@@ -141,7 +134,7 @@ class RefundConfirmFragment : Fragment(), RefundConfirmTableViewAdapter.RefundCo
                     (activity as MainActivity).showAlert()
                 }
                 if (count == 1) {
-                    if (this@RefundConfirmFragment != null && this@RefundConfirmFragment.isVisible) {
+                    if (this@RefundConfirmFragment.isVisible) {
                         progressBar.dialog.dismiss()
                         val fragment = RefundCompleteFragment.newInstance(transactions, refundedAmount, amount, updatedBalance)
                         (activity as MainActivity).gotoFragment(fragment, RefundCompleteFragment.TAG)

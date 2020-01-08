@@ -102,35 +102,6 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
-    fun generateUnicardID() {
-        val generateUnicardIDService = GenerateUnicardIDService.instance
-        val requestBody = GenerateUnicardIDRequestBody("",paperCutID!!, "",emailAddress, "")
-        val request = generateUnicardIDService.generateUnicardID(requestBody)
-
-        request.enqueue(object : Callback<ArrayList<UnicardAccount>> {
-            override fun onFailure(call: Call<ArrayList<UnicardAccount>>, t: Throwable) {
-                Log.i(TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
-            }
-
-            override fun onResponse(
-                call: Call<ArrayList<UnicardAccount>>,
-                response: Response<ArrayList<UnicardAccount>>
-            ) {
-                Log.i(TAG, "Got response with status code " + "${response?.code()} and message " + "${response?.message()}")
-                if (response.isSuccessful) {
-                    if (response?.body()?.size == 0) showAlert()
-                    else {
-                        unicardAccountManager.saveUnicardAccount(response?.body()!![0]) // save to global objects
-                        Log.i(TAG, "generate Unicard ID response body " + "${unicardAccountManager.readUnicardAccount()}")
-                        getPaperCutAccounts()
-                    }
-                } else {
-                    showAlert()
-                }
-            }
-        })
-    }
-
     fun getUnicardAccountAndLogin() {
         val generateUnicardIDService = GenerateUnicardIDService.instance
         val requestBody = GenerateUnicardIDRequestBody("",paperCutID!!, "",emailAddress, "")

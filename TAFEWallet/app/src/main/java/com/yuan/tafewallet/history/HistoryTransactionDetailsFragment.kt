@@ -1,7 +1,5 @@
 package com.yuan.tafewallet.history
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,13 +8,10 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.yuan.tafewallet.MainActivity
 
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.HistoryTransactionDetailsTableViewAdapter
-import com.yuan.tafewallet.models.PaperCutAccount
 import com.yuan.tafewallet.models.Transaction
-import com.yuan.tafewallet.topup.TopupFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_history_transaction_details.view.*
 
@@ -43,7 +38,7 @@ class HistoryTransactionDetailsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_history_transaction_details, container, false)
         view.historyTransactionsDetailsTable.adapter = HistoryTransactionDetailsTableViewAdapter(transaction)
         view.historyTransactionsDetailsTable.layoutManager = LinearLayoutManager(activity)
-        view.BackButton.setOnClickListener() {v ->
+        view.BackButton.setOnClickListener() {
             backButtonPressed()
         }
         return view

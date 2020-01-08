@@ -5,6 +5,106 @@
     <string name="title_history">History</string>
     <string name="title_refund">Refund</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Home Fragment -->
+    <string name="terms_label">You have accepted the terms and conditions on <b>%s</b></string>
+    <string name="user_name">John Citizen</string>
+    <string name="terms_link">View terms and conditions</string>
+
+    <!-- TopUp Card Details Fragment -->
+    <string name="card_details_label">Confirm Card Details: </string>
+
+    <!-- TopUp Complete Fragment -->
+    <string name="transaction_approved_label">Transaction Approved: </string>
+    <string name="receipt_email_label"><i><b>Note</b>: A copy of this receipt will be sent to your TAFE NSW email account</i></string>
+
+    <!-- TopUp Confirm Fragment -->
+    <string name="TopUp_amount">Top up amount</string>
+    <string name="payment_method">Payment method: </string>
+    <string name="save_card_label">I would like to save this card for future use.</string>
+    <string name="mean_label">What does it mean?</string>
+
+    <!-- TopUp New Card Fragment -->
+    <string name="new_card_label">Enter credit card information: </string>
+
+    <!-- TopUp Select Amount Fragment -->
+    <string name="select_amount_label">Select top up amount below: </string>
+
+    <!-- TopUp Select Card Fragment -->
+    <string name="select_card_label">Select an existing credit card below: </string>
+
+    <!-- History transaction Details Fragment -->
+    <string name="transaction_details_label">Transaction Details: </string>
+
+    <!-- History transactions Fragment -->
+    <string name="transaction_history_label">Transaction History: </string>
+    <string name="from_label">From: </string>
+    <string name="from">FromDate</string>
+    <string name="to_label">To: </string>
+    <string name="to">ToDate</string>
+
+    <!-- Refund Fragment -->
+    <string name="refund_amount_label">Enter refund amount: </string>
+    <string name="refund_placeholder">e.g. $15.00</string>
+    <string name="refund_message">Minimum refund amount is $2.50</string>
+    <string name="refund_error_message">Error: Insufficient amount.</string>
+
+    <!-- Refund Card Details Fragment -->
+    <string name="refund_card_details_label">Card Details: </string>
+
+    <!-- Refund Complete Fragment -->
+    <string name="refund_complete_label">Refund Completed Successfully: </string>
+    <string name="total_refund_amount_label">Total refund amount: </string>
+    <string name="refund_receipt"><i><b>Note</b>: A copy of this receipt will be sent to your TAFE NSW email account</i></string>
+
+
+    <!-- Refund Confirm Fragment -->
+    <string name="available_transactions_label">Available Refund Transaction Details: </string>
+    <string name="refund_amount">Refund Amount: </string>
+    <string name="refund_notice"><b>IMPORTANT: the transaction(s) above will be refunded to their original card for requested amount.</b></string>
+
+
+    <!-- Refund Transaction Details Fragment -->
+    <string name="refund_transaction_details_label">Refund Transaction Details: </string>
+
+    <!-- PopUp Meaning Fragment -->
+    <string name="important_label">Important</string>
+    <string name="save_card_message">This card will be saved securely in your TAFE wallet account for future use.</string>
+
+    <!-- PopUp Terms Fragment -->
+    <string name="terms_title">Terms and Conditions</string>
+    <string name="terms_content">End-User License Agreement (EULA) of NSW TAFE One PRINT Student App.    This End-User License Agreement ("EULA") is a legal agreement between you and Unicard Systems Pty Ltd.    This EULA agreement governs your acquisition and use of the NSW TAFE One PRINT App ("Software") directly from Unicard Systems Pty Ltd or indirectly through a Unicard Systems Pty Ltd authorised partner, reseller or distributor (a "Reseller").    Please read this EULA agreement carefully before completing the installation process and using the NSW TAFE One PRINT App software. It provides a license to use the NSW TAFE One PRINT App software and contains warranty information and liability disclaimers.    By clicking "accept" or installing and/or using the NSW TAFE One PRINT App software, you are confirming your acceptance of the Software and agreeing to become bound by the terms of this EULA agreement.    This EULA agreement shall apply only to the Software supplied by Unicard Systems Pty Ltd herewith regardless of whether other software is referred to or described herein. The terms also apply to any Unicard Systems Pty Ltd updates, supplements, Internet-based services, and support services for the Software, unless other terms accompany those items on delivery. If so, those terms apply.    Licence Grant  Unicard Systems Pty Ltd hereby grants you a personal, non-transferable, non-exclusive licence to use the NSW TAFE One PRINT App software on your device in accordance with the terms of this EULA agreement.    You are permitted to load the NSW TAFE One PRINT App onto a smart phone or Apple iOS phone under your control. You are responsible for ensuring your device meets the minimum requirements of the NSW TAFE One PRINT App software.  You are not permitted to:  • Edit, alter, modify, adapt, translate or otherwise change the whole or any part of the Software nor permit the whole or any part of the Software to be combined with or become incorporated in any other software, nor decompile, disassemble or reverse engineer the Software or attempt to do any such things  • Reproduce, copy, distribute, resell or otherwise use the Software for any commercial purpose  • Allow any third party to use the Software on behalf of or for the benefit of any third party  • Use the Software in any way which breaches any applicable local, national or international law  • Use the Software for any purpose that Unicard Systems Pty Ltd considers is a breach of this EULA agreement  Intellectual Property and Ownership: Unicard Systems Pty Ltd shall at all times retain ownership of the Software as originally downloaded by you and all subsequent downloads of the Software by you. The Software (and the copyright, and other intellectual property rights of whatever nature in the Software, including any modifications made thereto) are and shall remain the property of Unicard Systems Pty Ltd.  Termination  This EULA agreement is effective from the date you first use the Software and shall continue until terminated. You may terminate it at any time upon written notice to Unicard Systems Pty Ltd.  It will also terminate immediately if you fail to comply with any term of this EULA agreement. Upon such termination, the licences granted by this EULA agreement will immediately terminate and you agree to stop all access and use of the Software. The provisions that by their nature continue and survive will survive any termination of this EULA agreement.  Governing Law  This EULA agreement, and any dispute arising out of or in connection with this EULA agreement, shall be governed by and construed in accordance with the laws of Australia.</string>
+
+    <!-- general labels-->
+    <string name="accounts_label">TAFE NSW Wallet Accounts: </string>
+    <string name="account_name_label">Account Name: </string>
+    <string name="account_balance_label">Account Balance: </string>
+    <string name="account_name">AccountName</string>
+    <string name="account_balance">Balance</string>
+    <string name="amount">Amount</string>
+
+    <!-- buttons -->
+    <string name="continue_button">Continue</string>
+    <string name="done_button">Done</string>
+    <string name="confirm_button">Confirm to proceed</string>
+    <string name="use_new_card_button">Use new card</string>
+    <string name="back_button">Back</string>
+    <string name="search_button">Search</string>
+    <string name="got_it_button">Got it!</string>
+    <string name="accept_button">Accept</string>
+    <string name="decline_button">Decline and logout</string>
+    <string name="confirm_refund_button">Confirm to refund</string>
+
+    <!-- table labels -->
+    <string name="history_transaction_type">Transaction Type</string>
+    <string name="history_transaction_time">Transaction Time</string>
+    <string name="history_transaction_amount">Transaction Amount</string>
+    <string name="home_title">Title</string>
+    <string name="home_details">Details</string>
+    <string name="refund_transaction_details">Transaction Details</string>
+    <string name="card_number">Card Number</string>
+    <string name="expiry_date">Expiry Date</string>
+    <string name="refund_amount_table">Refund Amount</string>
+    <string name="topup_card_title">Card Title</string>
+    <string name="topup_card_details">Card Details</string>
+
 </resources>

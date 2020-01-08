@@ -7,25 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.yuan.tafewallet.MainActivity
-import com.yuan.tafewallet.PopupMeaningFragment
 import com.yuan.tafewallet.PopupTermsFragment
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.HomeTableViewAdapter
 import com.yuan.tafewallet.models.PaperCutAccountManager
 import com.yuan.tafewallet.models.UnicardAccountManager
-import com.yuan.tafewallet.refund.RefundFragment
-import com.yuan.tafewallet.topup.TopupSelectAmountFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
-import kotlinx.android.synthetic.main.fragment_topup_confirm.view.*
 
 class HomeFragment : Fragment() {
-    lateinit var unicardAccountManager: UnicardAccountManager
+    private lateinit var unicardAccountManager: UnicardAccountManager
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -56,7 +49,7 @@ class HomeFragment : Fragment() {
         if (unicardAccountManager.readUnicardAccount().TermAndConditionAgreementAt == null) {
             showTermsFragment()
         } else {
-            view.termsLabel.text = "You have accepted the terms and conditions on " + unicardAccountManager.readUnicardAccount().TermAndConditionAgreementAt
+            view.termsLabel.text = getString(R.string.terms_label, unicardAccountManager.readUnicardAccount().TermAndConditionAgreementAt)
         }
         return view
     }
@@ -69,13 +62,13 @@ class HomeFragment : Fragment() {
             dialogFragmentTransaction.remove(prev)
         }
         dialogFragmentTransaction.addToBackStack(null)
-        newFragment.show(dialogFragmentTransaction!!, "dialog")
+        newFragment.show(dialogFragmentTransaction, "dialog")
     }
 
     companion object {
         fun newInstance(): HomeFragment {
-            var homeFragment = HomeFragment()
-            var args = Bundle()
+            val homeFragment = HomeFragment()
+            val args = Bundle()
             homeFragment.arguments = args
             return homeFragment
         }

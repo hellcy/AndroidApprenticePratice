@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="16dp"
-        android:text="Amount"
+        android:text="@string/amount"
         android:textSize="18sp"
         android:textStyle="bold" />
 

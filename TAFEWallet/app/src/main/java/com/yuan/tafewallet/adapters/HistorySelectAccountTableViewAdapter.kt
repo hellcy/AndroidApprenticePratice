@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.models.PaperCutAccount
 
-class HistorySelectAccountTableViewAdapter(val accounts: ArrayList<PaperCutAccount>, val clickListener: HistorySelectAccountTableViewClickListener)
+class HistorySelectAccountTableViewAdapter(private val accounts: ArrayList<PaperCutAccount>, private val clickListener: HistorySelectAccountTableViewClickListener)
     : RecyclerView.Adapter<TopupSelectAccountViewHolder>() {
 
     interface HistorySelectAccountTableViewClickListener {

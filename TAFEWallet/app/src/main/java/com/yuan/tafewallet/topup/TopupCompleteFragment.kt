@@ -11,13 +11,10 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yuan.tafewallet.MainActivity
 
-import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.TopupTransactionCompleteTableViewAdapter
 import com.yuan.tafewallet.models.*
 import com.yuan.tafewallet.service.GetPaperCutAccountBalanceService
 import com.yuan.tafewallet.service.GetPaperCutAccountsRequestBody
-import com.yuan.tafewallet.service.ProcessTopupTransactionService
-import com.yuan.tafewallet.service.TopupBySingleUseTokenRequestBody
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_topup_complete.view.*
 import retrofit2.Call
@@ -28,8 +25,8 @@ import retrofit2.Response
 class TopupCompleteFragment : Fragment() {
     lateinit var account: PaperCutAccount
     var amount: Int = 0
-    lateinit var westpacTransaction: WestpacTransaction
-    lateinit var westpacAccount: WestpacAccount
+    private lateinit var westpacTransaction: WestpacTransaction
+    private lateinit var westpacAccount: WestpacAccount
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,17 +81,17 @@ class TopupCompleteFragment : Fragment() {
 
         request.enqueue(object : Callback<ArrayList<PaperCutAccount>> {
             override fun onFailure(call: Call<ArrayList<PaperCutAccount>>, t: Throwable) {
-                Log.i(TopupSelectCardFragment.TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+                Log.i(TopupSelectCardFragment.TAG, "Call to ${call.request()?.url()} " + "failed with $t")
             }
 
             override fun onResponse(
                 call: Call<ArrayList<PaperCutAccount>>,
                 response: Response<ArrayList<PaperCutAccount>>
             ) {
-                Log.i(TopupSelectCardFragment.TAG, "Got response with status code " + "${response?.code()} and message " + "${response?.message()}")
+                Log.i(TopupSelectCardFragment.TAG, "Got response with status code " + "${response.code()} and message " + "$response?.message()")
                 if (response.isSuccessful) {
-                    paperCutAccountManager.savePaperCutAccount(response?.body()!!)
-                    paperCutAccountManager.savePrimaryAccount(response?.body()!!)
+                    paperCutAccountManager.savePaperCutAccount(response.body()!!)
+                    paperCutAccountManager.savePrimaryAccount(response.body()!!)
                     Log.i(TopupSelectCardFragment.TAG, "get papercut account balance response body " + paperCutAccountManager.readPaperCutAccounts())
                 } else {
                     (activity as MainActivity).showAlert()

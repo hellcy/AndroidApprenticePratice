@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.models.WestpacAccount
 
-class TopupCardDetailsTableViewAdapter(var westpacAccount: WestpacAccount)
+class TopupCardDetailsTableViewAdapter(private var westpacAccount: WestpacAccount)
     : RecyclerView.Adapter<TopupCardDetailsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopupCardDetailsViewHolder {

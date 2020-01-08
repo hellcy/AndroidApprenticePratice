@@ -12,7 +12,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginStart="16dp"
         android:layout_weight="1"
-        android:text="Account Name"
+        android:text="@string/account_name"
         android:textSize="18sp" />
 
     <View
@@ -27,7 +27,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="16dp"
         android:layout_weight="1"
-        android:text="Balance"
+        android:text="@string/account_balance"
         android:textAlignment="textEnd"
         android:textSize="18sp"
         android:textStyle="bold" />

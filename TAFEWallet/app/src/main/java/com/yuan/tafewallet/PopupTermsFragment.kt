@@ -1,19 +1,15 @@
 package com.yuan.tafewallet
 
-import android.app.Activity
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
-import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
-import com.yuan.tafewallet.models.PaperCutAccountManager
 import com.yuan.tafewallet.models.UnicardAccount
 import com.yuan.tafewallet.models.UnicardAccountManager
 import com.yuan.tafewallet.service.UpdateUnicardAccountRequestBody
@@ -81,18 +77,18 @@ class PopupTermsFragment : DialogFragment() {
 
         request.enqueue(object : Callback<ArrayList<UnicardAccount>> {
             override fun onFailure(call: Call<ArrayList<UnicardAccount>>, t: Throwable) {
-                Log.i("TermsFragment", "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+                Log.i("TermsFragment", "Call to ${call.request()?.url()} " + "failed with $t")
             }
 
             override fun onResponse(
                 call: Call<ArrayList<UnicardAccount>>,
                 response: Response<ArrayList<UnicardAccount>>
             ) {
-                Log.i("TermsFragment", "Got response with status code " + "${response?.code()} and message " + "${response?.message()}")
+                Log.i("TermsFragment", "Got response with status code " + "${response.code()} and message " + "$response?.message()")
                 if (response.isSuccessful) {
-                    if (response?.body()?.size == 0) (activity as MainActivity).showAlert()
+                    if (response.body()?.size == 0) (activity as MainActivity).showAlert()
                     else {
-                        unicardAccountManager.saveUnicardAccount(response?.body()!![0]) // save to global objects
+                        unicardAccountManager.saveUnicardAccount(response.body()!![0]) // save to global objects
                         Log.i("TermsFragment", "update Unicard Account response body " + "${unicardAccountManager.readUnicardAccount()}")
                         unicardAccountManager.savePaperCutID(unicardAccountManager.readUnicardAccount().PaperCutID)
                     }

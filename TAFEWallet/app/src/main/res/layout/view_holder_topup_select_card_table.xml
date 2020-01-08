@@ -10,7 +10,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginStart="16dp"
         android:layout_weight="1"
-        android:text="Card Number"
+        android:text="@string/card_number"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -26,7 +26,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="48dp"
         android:layout_weight="1"
-        android:text="Expiry Date"
+        android:text="@string/expiry_date"
         android:textAlignment="textEnd"
         android:textSize="18sp"
         android:textStyle="bold" />

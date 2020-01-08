@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.models.WestpacTransaction
 
-class RefundCompleteTableViewAdapter(val transactions: ArrayList<WestpacTransaction>, val clickListener: RefundCompleteTableViewClickListener)
+class RefundCompleteTableViewAdapter(private val transactions: ArrayList<WestpacTransaction>, val clickListener: RefundCompleteTableViewClickListener)
     : RecyclerView.Adapter<RefundCompleteViewHolder>() {
 
     interface RefundCompleteTableViewClickListener {

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.models.Transaction
 
-class HistoryTransactionsTableViewAdapter(val transactions: ArrayList<Transaction>, val clickListener: HistoryTransactionsTableViewClickListener)
+class HistoryTransactionsTableViewAdapter(private val transactions: ArrayList<Transaction>, val clickListener: HistoryTransactionsTableViewClickListener)
     : RecyclerView.Adapter<HistoryTransactionsViewHolder>() {
 
     interface HistoryTransactionsTableViewClickListener {

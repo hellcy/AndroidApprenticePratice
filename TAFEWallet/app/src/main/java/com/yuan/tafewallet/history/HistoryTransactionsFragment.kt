@@ -33,13 +33,13 @@ import kotlin.collections.ArrayList
 
 
 class HistoryTransactionsFragment : Fragment(), HistoryTransactionsTableViewAdapter.HistoryTransactionsTableViewClickListener {
-    val fromDateCode: Int = 1
-    val toDateCode: Int = 2
-    var selectedDate = ""
-    var fromDate: String? = ""
-    var toDate: String? = ""
+    private val fromDateCode: Int = 1
+    private val toDateCode: Int = 2
+    private var selectedDate = ""
+    private var fromDate: String? = ""
+    private var toDate: String? = ""
 
-    lateinit var paperCutAccount: PaperCutAccount
+    private lateinit var paperCutAccount: PaperCutAccount
     var transactions = ArrayList<Transaction>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,13 +70,13 @@ class HistoryTransactionsFragment : Fragment(), HistoryTransactionsTableViewAdap
             // set the targetFragment to receive the results, specifying the request code
             newFragment.setTargetFragment(this, fromDateCode)
             // show the datePicker
-            newFragment.show(activity!!.supportFragmentManager, "datePicker")
+            newFragment.show(activity.supportFragmentManager, "datePicker")
         }
 
         view.ToDate.setOnClickListener {
             val newFragment: AppCompatDialogFragment = DatePickerFragment()
             newFragment.setTargetFragment(this, toDateCode)
-            newFragment.show(activity!!.supportFragmentManager, "datePicker")
+            newFragment.show(activity.supportFragmentManager, "datePicker")
         }
 
         view.SearchButton.setOnClickListener { v ->
@@ -99,7 +99,7 @@ class HistoryTransactionsFragment : Fragment(), HistoryTransactionsTableViewAdap
         val format = SimpleDateFormat("yyyy-MM-dd")
         val calendar = Calendar.getInstance()
         if (requestCode == fromDateCode && resultCode == Activity.RESULT_OK) { // get date from string
-            selectedDate = data!!.getStringExtra("selectedDate")
+            selectedDate = data!!.getStringExtra("selectedDate")!!
             // set the value of the editText
             view?.FromDate?.text = selectedDate
             view?.FromDate?.setTextColor(Color.BLACK)
@@ -109,7 +109,7 @@ class HistoryTransactionsFragment : Fragment(), HistoryTransactionsTableViewAdap
         }
 
         if (requestCode == toDateCode && resultCode == Activity.RESULT_OK) { // get date from string
-            selectedDate = data!!.getStringExtra("selectedDate")
+            selectedDate = data!!.getStringExtra("selectedDate")!!
             // set the value of the editText
             view?.ToDate?.text = selectedDate
             view?.ToDate?.setTextColor(Color.BLACK)
@@ -137,7 +137,7 @@ class HistoryTransactionsFragment : Fragment(), HistoryTransactionsTableViewAdap
 
         request.enqueue(object : Callback<ArrayList<Transaction>> {
             override fun onFailure(call: Call<ArrayList<Transaction>>, t: Throwable) {
-                Log.i(TopupFragment.TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+                Log.i(TopupFragment.TAG, "Call to ${call.request()?.url()} " + "failed with ${t.toString()}")
             }
 
             override fun onResponse(

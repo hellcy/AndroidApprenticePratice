@@ -1,7 +1,5 @@
 package com.yuan.tafewallet.refund
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,8 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.RefundCardDetailsTableViewAdapter
-import com.yuan.tafewallet.history.HistoryTransactionDetailsFragment
-import com.yuan.tafewallet.models.Transaction
 import com.yuan.tafewallet.models.WestpacTransaction
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_refund_card_details.view.*
@@ -43,7 +39,7 @@ class RefundCardDetailsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_refund_card_details, container, false)
         view.refundCardDetailsTable.adapter = RefundCardDetailsTableViewAdapter(transaction)
         view.refundCardDetailsTable.layoutManager = LinearLayoutManager(activity)
-        view.BackButton.setOnClickListener { v ->
+        view.BackButton.setOnClickListener {
             backButtonPressed()
         }
         return view

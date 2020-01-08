@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.models.WestpacAccount
 
-class TopupSelectCardTableViewAdapter(var westpacAccounts: ArrayList<WestpacAccount>, val clickListener: TopupSelectCardTableViewClickListener)
+class TopupSelectCardTableViewAdapter(private var westpacAccounts: ArrayList<WestpacAccount>, val clickListener: TopupSelectCardTableViewClickListener)
     : RecyclerView.Adapter<TopupSelectCardViewHolder>() {
     interface TopupSelectCardTableViewClickListener {
         fun listItemClicked(position: Int)

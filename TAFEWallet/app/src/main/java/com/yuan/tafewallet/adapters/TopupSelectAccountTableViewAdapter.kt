@@ -1,20 +1,15 @@
 package com.yuan.tafewallet.adapters
 
-import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
-import com.yuan.tafewallet.models.Account
 import com.yuan.tafewallet.models.PaperCutAccount
-import com.yuan.tafewallet.models.PaperCutAccountManager
 
-
-class TopupSelectAccountTableViewAdapter(val paperCutAccounts: ArrayList<PaperCutAccount>, val clickListener: TopupSelectAccountTableViewClickListener)
+class TopupSelectAccountTableViewAdapter(private val paperCutAccounts: ArrayList<PaperCutAccount>, private val clickListener: TopupSelectAccountTableViewClickListener)
     : RecyclerView.Adapter<TopupSelectAccountViewHolder>() {
 
     interface TopupSelectAccountTableViewClickListener {

@@ -16,17 +16,16 @@ import com.yuan.tafewallet.adapters.RefundCompleteTableViewAdapter
 import com.yuan.tafewallet.models.PaperCutAccount
 import com.yuan.tafewallet.models.PaperCutAccountManager
 import com.yuan.tafewallet.models.WestpacTransaction
-import com.yuan.tafewallet.topup.TopupFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_refund_complete.view.*
 
 class RefundCompleteFragment : Fragment(), RefundCompleteTableViewAdapter.RefundCompleteTableViewClickListener {
-    lateinit var transactions: ArrayList<WestpacTransaction>
-    var refundedAmount: Double = 0.0
-    var refundAmount: Double = 0.0
-    var updatedBalance: Double = 0.0
-    lateinit var paperCutAccountManager: PaperCutAccountManager
-    lateinit var primaryAccount: PaperCutAccount
+    private lateinit var transactions: ArrayList<WestpacTransaction>
+    private var refundedAmount: Double = 0.0
+    private var refundAmount: Double = 0.0
+    private var updatedBalance: Double = 0.0
+    private lateinit var paperCutAccountManager: PaperCutAccountManager
+    private lateinit var primaryAccount: PaperCutAccount
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -59,8 +58,8 @@ class RefundCompleteFragment : Fragment(), RefundCompleteTableViewAdapter.Refund
         val view = inflater.inflate(R.layout.fragment_refund_complete, container, false)
         view.AccountNameLabel.text = primaryAccount.AccountName
         view.AccountBalanceLabel.text = (activity as MainActivity).convertDollarSign(updatedBalance)
-        view.refundAmount.text = (activity as MainActivity).convertDollarSign(refundedAmount)
-        view.DoneButton.setOnClickListener { v ->
+        view.refundAmount.text = (activity).convertDollarSign(refundedAmount)
+        view.DoneButton.setOnClickListener {
             doneButtonPressed()
         }
 

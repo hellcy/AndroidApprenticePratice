@@ -1,6 +1,5 @@
 package com.yuan.tafewallet.service
 
-import com.yuan.tafewallet.models.UnicardAccount
 import com.yuan.tafewallet.models.WestpacAccount
 import okhttp3.OkHttpClient
 import retrofit2.Call

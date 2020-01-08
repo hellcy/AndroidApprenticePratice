@@ -8,11 +8,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.yuan.tafewallet.R
 
-class TopupSelectAmountTableViewAdapter(val clickListener: TopupSelectAmountTableViewClickListener)
+class TopupSelectAmountTableViewAdapter(private val clickListener: TopupSelectAmountTableViewClickListener)
     : RecyclerView.Adapter<TopupSelectAmountViewHolder>() {
 
-    val amountInts: List<Int> = listOf(5, 10, 15, 20, 50)
-    val amounts: List<String> = listOf("$5.00", "$10.00", "$15.00", "$20.00", "$50.00")
+    private val amountInts: List<Int> = listOf(5, 10, 15, 20, 50)
+    private val amounts: List<String> = listOf("$5.00", "$10.00", "$15.00", "$20.00", "$50.00")
 
     interface TopupSelectAmountTableViewClickListener {
         fun listItemClicked(amount: Int)

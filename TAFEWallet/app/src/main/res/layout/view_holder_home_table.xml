@@ -12,7 +12,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
-        android:text="Title"
+        android:text="@string/home_title"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -23,6 +23,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
-        android:text="Details"
+        android:text="@string/home_details"
         android:textSize="18sp" />
 </LinearLayout>

@@ -6,15 +6,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.adapters.TopupCardDetailsTableViewAdapter
-import com.yuan.tafewallet.models.Account
 import com.yuan.tafewallet.models.PaperCutAccount
 import com.yuan.tafewallet.models.WestpacAccount
 import kotlinx.android.synthetic.main.activity_main.*

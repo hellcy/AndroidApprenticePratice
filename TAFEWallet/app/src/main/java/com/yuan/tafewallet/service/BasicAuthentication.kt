@@ -17,6 +17,6 @@ class BasicAuthInterceptor(user: String?, password: String?) : Interceptor {
     }
 
     init {
-        credentials = Credentials.basic(user, password)
+        credentials = Credentials.basic(user!!, password!!)
     }
 }

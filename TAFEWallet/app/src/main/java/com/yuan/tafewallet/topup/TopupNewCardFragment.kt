@@ -1,6 +1,5 @@
 package com.yuan.tafewallet.topup
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
-import com.yuan.tafewallet.models.Account
 import com.yuan.tafewallet.models.PaperCutAccount
 import com.yuan.tafewallet.models.WestpacAccount
 import kotlinx.android.synthetic.main.activity_main.*
