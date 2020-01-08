@@ -47,7 +47,7 @@ class TopupCardDetailsFragment : Fragment() {
         }
 
         val view = inflater.inflate(R.layout.fragment_topup_card_details, container, false)
-        view.AccountBalanceLabel.text = "$" + "%.2f".format(account.Balance)
+        view.AccountBalanceLabel.text = (activity as MainActivity).convertDollarSign(account.Balance)
         view.AccountNameLabel.text = account.AccountName
         view.ContinueButton.setOnClickListener { v ->
             continueButtonPressed() }

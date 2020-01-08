@@ -79,7 +79,7 @@ class RefundConfirmFragment : Fragment(), RefundConfirmTableViewAdapter.RefundCo
 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_refund_confirm, container, false)
-        view.refundAmount.text = "$" + "%.2f".format(amount)
+        view.refundAmount.text = (activity as MainActivity).convertDollarSign(amount)
         view.RefundConfirmButton.setOnClickListener { v ->
             confirmRefundButtonPressed(view)
         }

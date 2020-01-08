@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.yuan.tafewallet.MainActivity
 import com.yuan.tafewallet.R
 import com.yuan.tafewallet.models.Account
 import com.yuan.tafewallet.models.PaperCutAccount
@@ -38,7 +39,7 @@ class TopupSelectAccountTableViewAdapter(val paperCutAccounts: ArrayList<PaperCu
         when (position) {
             0 -> {
                 holder.accountName.text = paperCutAccount.AccountName
-                holder.accountBalance.text = "$" + "%.2f".format(paperCutAccount.Balance)
+                holder.accountBalance.text = convertDollarSign(paperCutAccount.Balance)
                 holder.itemView.setOnClickListener {
                     clickListener.listItemClicked(paperCutAccount)
                 }
@@ -52,6 +53,14 @@ class TopupSelectAccountTableViewAdapter(val paperCutAccounts: ArrayList<PaperCu
             holder.itemView.setBackgroundColor(Color.parseColor("#cd8bda"))
         } else {
             holder.itemView.setBackgroundColor(Color.parseColor("#aa7bc9"))
+        }
+    }
+
+    fun convertDollarSign(balance: Double): String {
+        if (balance >= 0) {
+            return "$" + "%.2f".format(balance)
+        } else {
+            return "-$" + "%.2f".format(-balance)
         }
     }
 }

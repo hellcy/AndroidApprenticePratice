@@ -58,7 +58,7 @@ class TopupCompleteFragment : Fragment() {
             updatedBalance += amount
         }
         view.AccountNameLabel.text = account.AccountName
-        view.AccountBalanceLabel.text = "$" + "%.2f".format(updatedBalance)
+        view.AccountBalanceLabel.text = (activity as MainActivity).convertDollarSign(updatedBalance)
         retrievePaperCutAccountBalance()
         view.DoneButton.setOnClickListener { v ->
             doneButtonPressed() }

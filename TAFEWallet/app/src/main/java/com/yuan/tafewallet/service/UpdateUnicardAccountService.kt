@@ -10,7 +10,8 @@ import retrofit2.http.POST
 
 interface UpdateUnicardAccountService {
     // 1
-    @POST("/TAFEOnsiteAPIForMobileAndWebPortal/api/TAFEOnsiteAPI/UpdateUserToUnicardSQLDatabase")
+    //@POST("/v1/updateUnicardAccount") // preprod
+    @POST("/Prod/updateUnicardAccount") // test
     // 2
     fun updateUnicardAccount(@Body requestBody: UpdateUnicardAccountRequestBody):
             Call<ArrayList<UnicardAccount>>
@@ -21,7 +22,8 @@ interface UpdateUnicardAccountService {
             // 5
             val client = OkHttpClient.Builder().addInterceptor(BasicAuthInterceptor("Unicard_API", "1@3$"))
             val retrofit = Retrofit.Builder()
-                .baseUrl("https://idmobile-dev.com.au")
+                //.baseUrl("https://tafenswpayment.identityone-api.com.au") // preprod
+                .baseUrl("https://f3fcdp7la2.execute-api.ap-southeast-2.amazonaws.com") // test
                 .client(client.build())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

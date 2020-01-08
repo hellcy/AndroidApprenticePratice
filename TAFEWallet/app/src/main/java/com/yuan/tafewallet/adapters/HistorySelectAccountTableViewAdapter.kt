@@ -31,7 +31,7 @@ class HistorySelectAccountTableViewAdapter(val accounts: ArrayList<PaperCutAccou
     override fun onBindViewHolder(holder: TopupSelectAccountViewHolder, position: Int) {
         val account = accounts[position]
         holder.accountName.text = account.AccountName
-        holder.accountBalance.text = "$" + "%.2f".format(account.Balance)
+        holder.accountBalance.text = convertDollarSign(account.Balance)
         holder.itemView.setOnClickListener {
             clickListener.listItemClicked(position)
         }
@@ -40,6 +40,14 @@ class HistorySelectAccountTableViewAdapter(val accounts: ArrayList<PaperCutAccou
             holder.itemView.setBackgroundColor(Color.parseColor("#cd8bda"))
         } else {
             holder.itemView.setBackgroundColor(Color.parseColor("#aa7bc9"))
+        }
+    }
+
+    fun convertDollarSign(balance: Double): String {
+        if (balance >= 0) {
+            return "$" + "%.2f".format(balance)
+        } else {
+            return "-$" + "%.2f".format(-balance)
         }
     }
 }

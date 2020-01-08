@@ -10,7 +10,8 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface RegisterAccountService {
-    @POST("/v1/registerAccountByReceiptNumber")
+    //@POST("/v1/registerAccountByReceiptNumber") // preprod
+    @POST("/Prod/registerAccountByReceiptNumber") // test
     fun registerAccount(@Body requestBody: RegisterAccountRequestBody):
             Call<WestpacAccount>
 
@@ -18,7 +19,8 @@ interface RegisterAccountService {
         val instance: RegisterAccountService by lazy {
             val client = OkHttpClient.Builder().addInterceptor(BasicAuthInterceptor("Unicard_API", "1@3$"))
             val retrofit = Retrofit.Builder()
-                .baseUrl("https://tafenswpayment.identityone-api.com.au")
+                //.baseUrl("https://tafenswpayment.identityone-api.com.au") // preprod
+                .baseUrl("https://f3fcdp7la2.execute-api.ap-southeast-2.amazonaws.com") // test
                 .client(client.build())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

@@ -11,7 +11,8 @@ import retrofit2.http.POST
 
 interface GetTransactionHistoryService {
     // 1
-    @POST("/TAFEOnsiteAPIForMobileAndWebPortal/api/TAFEOnsiteAPI/RetrieveAllTransactionsByPapercutAccountNameAndDateRange")
+    //@POST("/v1/getPaperCutTransactionHistory") // preprod
+    @POST("/Prod/getPaperCutTransactionHistory") // test
     // 2
     fun getTransactionHistory(@Body requestBody: GetTransactionHistoryRequestBody):
             Call<ArrayList<Transaction>>
@@ -22,7 +23,8 @@ interface GetTransactionHistoryService {
             // 5
             val client = OkHttpClient.Builder().addInterceptor(BasicAuthInterceptor("Unicard_API", "1@3$"))
             val retrofit = Retrofit.Builder()
-                .baseUrl("https://idmobile-dev.com.au")
+                //.baseUrl("https://tafenswpayment.identityone-api.com.au") // preprod
+                .baseUrl("https://f3fcdp7la2.execute-api.ap-southeast-2.amazonaws.com") // test
                 .client(client.build())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

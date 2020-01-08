@@ -11,7 +11,8 @@ import retrofit2.http.POST
 
 interface GetRefundTransactionService {
     // 1
-    @POST("/v1/getRefundTransactions")
+    //@POST("/v1/getRefundTransactions") // preprod
+    @POST("/Prod/getRefundTransactions") // test
     // 2
     fun getRefundTransactions(@Body requestBody: GetRefundTransactionsRequestBody):
             Call<ArrayList<WestpacTransaction>>
@@ -22,7 +23,8 @@ interface GetRefundTransactionService {
             // 5
             val client = OkHttpClient.Builder().addInterceptor(BasicAuthInterceptor("Unicard_API", "1@3$"))
             val retrofit = Retrofit.Builder()
-                .baseUrl("https://tafenswpayment.identityone-api.com.au")
+                //.baseUrl("https://tafenswpayment.identityone-api.com.au") // preprod
+                .baseUrl("https://f3fcdp7la2.execute-api.ap-southeast-2.amazonaws.com") // test
                 .client(client.build())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

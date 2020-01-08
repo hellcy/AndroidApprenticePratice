@@ -58,8 +58,8 @@ class RefundCompleteFragment : Fragment(), RefundCompleteTableViewAdapter.Refund
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_refund_complete, container, false)
         view.AccountNameLabel.text = primaryAccount.AccountName
-        view.AccountBalanceLabel.text = "$" + "%.2f".format(updatedBalance)
-        view.refundAmount.text = "$" + "%.2f".format(refundedAmount)
+        view.AccountBalanceLabel.text = (activity as MainActivity).convertDollarSign(updatedBalance)
+        view.refundAmount.text = (activity as MainActivity).convertDollarSign(refundedAmount)
         view.DoneButton.setOnClickListener { v ->
             doneButtonPressed()
         }

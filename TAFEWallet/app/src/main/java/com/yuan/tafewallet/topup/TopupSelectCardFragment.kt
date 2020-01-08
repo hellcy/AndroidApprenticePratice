@@ -58,7 +58,7 @@ class TopupSelectCardFragment : Fragment(), TopupSelectCardTableViewAdapter.Topu
 
         val view = inflater.inflate(R.layout.fragment_topup_select_card, container, false)
         view.AccountNameLabel.text = account.AccountName
-        view.AccountBalanceLabel.text = "$" + "%.2f".format(account.Balance)
+        view.AccountBalanceLabel.text = (activity as MainActivity).convertDollarSign(account.Balance)
 
         view.topupSelectCardSwipeRefresh.setOnRefreshListener {
             getAccountTokens(view)

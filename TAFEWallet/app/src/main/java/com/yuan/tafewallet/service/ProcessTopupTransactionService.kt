@@ -9,11 +9,13 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface ProcessTopupTransactionService {
-    @POST("/v1/processTransactionByAccountToken")
+    //@POST("/v1/processTransactionByAccountToken") // preprod
+    @POST("/Prod/processTransactionByAccountToken") // test
     fun topupByAccountToken(@Body requestBody: TopupByAccountTokenRequestBody):
             Call<WestpacTransaction>
 
-    @POST("/v1/processTransactionBySingleUseToken")
+    //@POST("/v1/processTransactionBySingleUseToken") // preprod
+    @POST("/Prod/processTransactionBySingleUseToken") // test
     fun topupBySingleUseToken(@Body requestBody: TopupBySingleUseTokenRequestBody):
             Call<WestpacTransaction>
 
@@ -21,7 +23,8 @@ interface ProcessTopupTransactionService {
         val instance: ProcessTopupTransactionService by lazy {
             val client = OkHttpClient.Builder().addInterceptor(BasicAuthInterceptor("Unicard_API", "1@3$"))
             val retrofit = Retrofit.Builder()
-                .baseUrl("https://tafenswpayment.identityone-api.com.au")
+                //.baseUrl("https://tafenswpayment.identityone-api.com.au") // preprod
+                .baseUrl("https://f3fcdp7la2.execute-api.ap-southeast-2.amazonaws.com") // test
                 .client(client.build())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

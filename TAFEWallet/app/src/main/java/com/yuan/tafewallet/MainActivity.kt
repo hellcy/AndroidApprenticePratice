@@ -70,7 +70,6 @@ class MainActivity : AppCompatActivity() {
         val navigation = findViewById(R.id.nav_view) as BottomNavigationView
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-
         setFragment(homeFragment)
     }
 
@@ -147,5 +146,13 @@ class MainActivity : AppCompatActivity() {
             .setMessage("Action failed, please try again later")
             .setPositiveButton(android.R.string.ok, null)
             .show()
+    }
+
+    fun convertDollarSign(balance: Double): String {
+        if (balance >= 0) {
+            return "$" + "%.2f".format(balance)
+        } else {
+            return "-$" + "%.2f".format(-balance)
+        }
     }
 }

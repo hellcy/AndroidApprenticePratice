@@ -2,6 +2,7 @@ package com.yuan.tafewallet.topup
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
@@ -20,10 +21,7 @@ import com.yuan.tafewallet.PopupMeaningFragment
 import com.yuan.tafewallet.TAFEWalletApplication
 import com.yuan.tafewallet.adapters.TopupCardDetailsTableViewAdapter
 import com.yuan.tafewallet.dagger.AppComponent
-import com.yuan.tafewallet.models.PaperCutAccount
-import com.yuan.tafewallet.models.UnicardAccountManager
-import com.yuan.tafewallet.models.WestpacAccount
-import com.yuan.tafewallet.models.WestpacTransaction
+import com.yuan.tafewallet.models.*
 import com.yuan.tafewallet.service.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_topup_confirm.view.*
@@ -45,9 +43,14 @@ class TopupConfirmFragment : Fragment() {
     var amount: Int = 0
     var saveCard: Boolean = false
     val progressBar = CustomProgressBar()
+    lateinit var unicardAccountManager: UnicardAccountManager
+    lateinit var paperCutAccountManager: PaperCutAccountManager
+    var quickStreamID = ""
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        unicardAccountManager = UnicardAccountManager(context)
+        paperCutAccountManager = PaperCutAccountManager(context)
         (activity?.application as TAFEWalletApplication).mainComponent.injectTopupConfirmFragment(this)
     }
 
@@ -75,8 +78,8 @@ class TopupConfirmFragment : Fragment() {
 
         val view = inflater.inflate(com.yuan.tafewallet.R.layout.fragment_topup_confirm, container, false)
         view.AccountNameLabel.text = account.AccountName
-        view.AccountBalanceLabel.text = "$" + "%.2f".format(account.Balance)
-        view.Amount.text = "$" + "%.2f".format(amount.toDouble())
+        view.AccountBalanceLabel.text = (activity as MainActivity).convertDollarSign(account.Balance)
+        view.Amount.text = (activity as MainActivity).convertDollarSign(amount.toDouble())
 
         if (secretToken == null) {
             view.meaningLabel.isVisible = false
@@ -107,22 +110,95 @@ class TopupConfirmFragment : Fragment() {
     }
 
     private fun confirmButtonPressed() {
-        // TODO: use saveCard boolean
         progressBar.show(context!!,"Transaction in progress... \nPlease do not close or exit this application")
-
-        if (secretToken != null) {
-            // use new card
-            performTopupBySingleUseToken()
+        if (unicardAccountManager.readUnicardAccount().QuickStreamID == null) {
+            createQuickStreamAccount()
         } else {
-            // use saved card
-            performTopupByAccountToken()
+            if (secretToken != null) {
+                // use new card
+                performTopupBySingleUseToken()
+            } else {
+                // use saved card
+                performTopupByAccountToken()
+            }
         }
-//        Handler().postDelayed({
-//            progressBar.dialog.dismiss()
-//
-//            val fragment = TopupCompleteFragment.newInstance(account, amount)
-//            (activity as MainActivity).gotoFragment(fragment, TopupCompleteFragment.TAG)
-//        }, 1000)
+    }
+
+    fun createQuickStreamAccount() {
+        val email = if (paperCutAccountManager.readPrimaryAccount().Email == null) "" else paperCutAccountManager.readPrimaryAccount().Email!!
+        val createQuickStreamAccountService = CreateQuickStreamAccountService.instance
+        val requestBody = CreateQuickStreamAccountRequestBody(unicardAccountManager.readUnicardAccount().UnicardID,
+            paperCutAccountManager.readPrimaryAccount().FullName!!,
+            email)
+
+        val request = createQuickStreamAccountService.createQuickStreamAccount(requestBody)
+
+        request.enqueue(object : Callback<String> {
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                Log.i(TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+            }
+
+            override fun onResponse(
+                call: Call<String>,
+                response: Response<String>
+            ) {
+                Log.i(TAG, "Got response with status code " + "${response?.code()} and message " + "${response?.message()}")
+                if (response.isSuccessful) {
+                    quickStreamID = response?.body()!!
+                    Log.i(TAG, "get paperCutAccounts response body " + quickStreamID)
+
+                    updateUnicardAccount()
+                } else {
+                    (activity as MainActivity).showAlert()
+                    progressBar.dialog.dismiss()
+                }
+            }
+        })
+    }
+
+    fun updateUnicardAccount() {
+        val updateUnicardAccountService = UpdateUnicardAccountService.instance
+        val requestBody = UpdateUnicardAccountRequestBody(
+            unicardAccountManager.readUnicardAccount().UnicardID,
+            unicardAccountManager.readUnicardAccount().PaperCutID,
+            quickStreamID,
+            unicardAccountManager.readUnicardAccount().Email,
+            "")
+        val request = updateUnicardAccountService.updateUnicardAccount(requestBody)
+
+        request.enqueue(object : Callback<ArrayList<UnicardAccount>> {
+            override fun onFailure(call: Call<ArrayList<UnicardAccount>>, t: Throwable) {
+                Log.i(TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<UnicardAccount>>,
+                response: Response<ArrayList<UnicardAccount>>
+            ) {
+                Log.i(TAG, "Got response with status code " + "${response?.code()} and message " + "${response?.message()}")
+                if (response.isSuccessful) {
+                    if (response?.body()?.size == 0) {
+                        (activity as MainActivity).showAlert()
+                        progressBar.dialog.dismiss()
+                    }
+                    else {
+                        unicardAccountManager.saveUnicardAccount(response?.body()!![0]) // save to global objects
+                        Log.i(TAG, "update Unicard Account response body " + "${unicardAccountManager.readUnicardAccount()}")
+
+                        if (secretToken != null) {
+                            // use new card
+                            performTopupBySingleUseToken()
+                        } else {
+                            // use saved card
+                            performTopupByAccountToken()
+                        }
+                    }
+                } else {
+                    (activity as MainActivity).showAlert()
+                    progressBar.dialog.dismiss()
+                }
+            }
+        })
     }
 
     fun performTopupByAccountToken() {

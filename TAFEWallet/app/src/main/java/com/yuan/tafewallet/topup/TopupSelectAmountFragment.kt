@@ -42,7 +42,7 @@ class TopupSelectAmountFragment : Fragment(), TopupSelectAmountTableViewAdapter.
 
         val view = inflater.inflate(R.layout.fragment_topup_select_amount, container, false)
         view.AccountNameLabel.text = account.AccountName
-        view.AccountBalanceLabel.text = "$" + "%.2f".format(account.Balance)
+        view.AccountBalanceLabel.text = (activity as MainActivity).convertDollarSign(account.Balance)
 
         view.topupSelectAmountTable.adapter = TopupSelectAmountTableViewAdapter(this)
         view.topupSelectAmountTable.layoutManager = LinearLayoutManager(activity)

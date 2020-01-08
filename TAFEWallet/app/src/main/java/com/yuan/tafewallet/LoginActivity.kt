@@ -3,6 +3,8 @@ package com.yuan.tafewallet
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.webkit.JavascriptInterface
+import android.webkit.WebViewClient
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +14,8 @@ import com.yuan.tafewallet.models.PaperCutAccountManager
 import com.yuan.tafewallet.models.UnicardAccount
 import com.yuan.tafewallet.models.UnicardAccountManager
 import com.yuan.tafewallet.service.*
+import com.yuan.tafewallet.topup.TopupNewCardFragment
+import kotlinx.android.synthetic.main.fragment_topup_new_card.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,9 +24,9 @@ import retrofit2.Response
 class LoginActivity : AppCompatActivity() {
     val TAG = javaClass.simpleName
     internal lateinit var loginButton: Button
-    val paperCutID = "a8000761"
-    val emailAddress = "yuanAndroid@unicard.com.au"
-    var quickStreamID = ""
+    lateinit var webView: CustomWebView
+    var paperCutID: String? = "a8000761"
+    val emailAddress = "testAndroid@unicard.com.au"
     val paperCutAccountManager = PaperCutAccountManager(this)
     val unicardAccountManager = UnicardAccountManager(this)
     var savedPaperCutID: String? = null
@@ -32,35 +36,44 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         supportActionBar?.hide()
         loginButton = findViewById(R.id.LoginButton)
-
+        webView = findViewById(R.id.webView)
         loginButton.setOnClickListener {v -> loginButtonPressed()}
+
         savedPaperCutID = unicardAccountManager.readPaperCutID()
 
-        unicardAccountManager.savePaperCutID("a8000761")
-        // TODO: Get information from TAFE SSO
-
-        // first time log in
-        if (savedPaperCutID != null) {
-            // TODO: add BioID Check here
+        if (savedPaperCutID != "" && savedPaperCutID != null) {
             getPaperCutAccounts()
-            getUnicardAccountAndLogin()
-        } else {
-            // TODO: - load SSO page and get PaperCut ID and Email Address
-            // Then use the information to create Unicard ID and QuickStream ID
-            // Now assume we already have PaperCut ID and Email
+        }
 
-            generateUnicardID()
+        webView.loadUrl("https://tafensw.identityone-api.com.au/sso_saml/mobile-preprod")
+        webView.settings.javaScriptEnabled = true
+        webView.settings.saveFormData = false
+        webView.addJavascriptInterface(WebAppInterface(this), "userLogin")
+        webView.webViewClient = WebViewClient()
+    }
+
+
+    class WebAppInterface(val activity: LoginActivity) {
+        @JavascriptInterface
+        fun postMessage(paperCutID: String) {
+            activity.paperCutID = paperCutID
+            activity.performWebViewRequest()
         }
     }
 
-    fun loginButtonPressed() {
+    fun performWebViewRequest() {
+        // first time log in
         getPaperCutAccounts()
-        getUnicardAccountAndLogin()
+    }
+
+    fun loginButtonPressed() {
+        unicardAccountManager.savePaperCutID("a8000761")
+        getPaperCutAccounts()
     }
 
     fun getPaperCutAccounts() {
         val getPaperCutAccountsService = GetPaperCutAccountsService.instance
-        val requestBody = GetPaperCutAccountsRequestBody(paperCutID)
+        val requestBody = GetPaperCutAccountsRequestBody(paperCutID!!)
         val request = getPaperCutAccountsService.getPaperCutAccounts(requestBody)
 
         request.enqueue(object : Callback<ArrayList<PaperCutAccount>> {
@@ -79,76 +92,8 @@ class LoginActivity : AppCompatActivity() {
                         paperCutAccountManager.savePaperCutAccount(response?.body()!!) // save to global objects
                         paperCutAccountManager.savePrimaryAccount(response?.body()!!)
                         Log.i(TAG, "get paperCutAccounts response body " + "${paperCutAccountManager.readPaperCutAccounts()}")
-                        if (savedPaperCutID == null) {
-                            createQuickStreamAccount()
-                        }
-                    }
-                } else {
-                    showAlert()
-                }
-            }
-        })
-    }
 
-    fun createQuickStreamAccount() {
-        val email = if (paperCutAccountManager.readPrimaryAccount().Email == null) "" else paperCutAccountManager.readPrimaryAccount().Email!!
-        val createQuickStreamAccountService = CreateQuickStreamAccountService.instance
-        val requestBody = CreateQuickStreamAccountRequestBody(unicardAccountManager.readUnicardAccount().UnicardID,
-            paperCutAccountManager.readPrimaryAccount().FullName!!,
-            email)
-
-        val request = createQuickStreamAccountService.createQuickStreamAccount(requestBody)
-
-        request.enqueue(object : Callback<String> {
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                Log.i(TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
-            }
-
-            override fun onResponse(
-                call: Call<String>,
-                response: Response<String>
-            ) {
-                Log.i(TAG, "Got response with status code " + "${response?.code()} and message " + "${response?.message()}")
-                if (response.isSuccessful) {
-                    quickStreamID = response?.body()!!
-                    Log.i(TAG, "get paperCutAccounts response body " + quickStreamID)
-
-                    updateUnicardAccount()
-                } else {
-                    showAlert()
-                }
-            }
-        })
-    }
-
-    fun updateUnicardAccount() {
-        val updateUnicardAccountService = UpdateUnicardAccountService.instance
-        val requestBody = UpdateUnicardAccountRequestBody(
-            unicardAccountManager.readUnicardAccount().UnicardID,
-            unicardAccountManager.readUnicardAccount().PaperCutID,
-            quickStreamID,
-            unicardAccountManager.readUnicardAccount().Email,
-            "")
-        val request = updateUnicardAccountService.updateUnicardAccount(requestBody)
-
-        request.enqueue(object : Callback<ArrayList<UnicardAccount>> {
-            override fun onFailure(call: Call<ArrayList<UnicardAccount>>, t: Throwable) {
-                Log.i(TAG, "Call to ${call?.request()?.url()} " + "failed with ${t.toString()}")
-            }
-
-            override fun onResponse(
-                call: Call<ArrayList<UnicardAccount>>,
-                response: Response<ArrayList<UnicardAccount>>
-            ) {
-                Log.i(TAG, "Got response with status code " + "${response?.code()} and message " + "${response?.message()}")
-                if (response.isSuccessful) {
-                    if (response?.body()?.size == 0) showAlert()
-                    else {
-                        unicardAccountManager.saveUnicardAccount(response?.body()!![0]) // save to global objects
-                        Log.i(TAG, "update Unicard Account response body " + "${unicardAccountManager.readUnicardAccount()}")
-                        unicardAccountManager.savePaperCutID(unicardAccountManager.readUnicardAccount().PaperCutID)
-                        val intent = Intent(applicationContext,MainActivity::class.java)
-                        startActivity(intent)
+                        getUnicardAccountAndLogin()
                     }
                 } else {
                     showAlert()
@@ -159,7 +104,7 @@ class LoginActivity : AppCompatActivity() {
 
     fun generateUnicardID() {
         val generateUnicardIDService = GenerateUnicardIDService.instance
-        val requestBody = GenerateUnicardIDRequestBody("",paperCutID, "",emailAddress, "")
+        val requestBody = GenerateUnicardIDRequestBody("",paperCutID!!, "",emailAddress, "")
         val request = generateUnicardIDService.generateUnicardID(requestBody)
 
         request.enqueue(object : Callback<ArrayList<UnicardAccount>> {
@@ -188,7 +133,7 @@ class LoginActivity : AppCompatActivity() {
 
     fun getUnicardAccountAndLogin() {
         val generateUnicardIDService = GenerateUnicardIDService.instance
-        val requestBody = GenerateUnicardIDRequestBody("",paperCutID, "",emailAddress, "")
+        val requestBody = GenerateUnicardIDRequestBody("",paperCutID!!, "",emailAddress, "")
         val request = generateUnicardIDService.generateUnicardID(requestBody)
 
         request.enqueue(object : Callback<ArrayList<UnicardAccount>> {
@@ -205,7 +150,9 @@ class LoginActivity : AppCompatActivity() {
                     if (response?.body()?.size == 0) showAlert()
                     else {
                         unicardAccountManager.saveUnicardAccount(response?.body()!![0]) // save to global objects
+                        unicardAccountManager.savePaperCutID(paperCutAccountManager.readPrimaryAccount().UserName!!)
                         Log.i(TAG, "get Unicard account response body " + "${unicardAccountManager.readUnicardAccount()}")
+
                         val intent = Intent(applicationContext,MainActivity::class.java)
                         startActivity(intent)
                     }
@@ -219,7 +166,7 @@ class LoginActivity : AppCompatActivity() {
     fun showAlert() {
         val alert = AlertDialog.Builder(this@LoginActivity)
         alert.setTitle("Whoops...")
-            .setMessage("Action failed, please try again later")
+            .setMessage("Action failed, please try again later. Make sure you have a valid PaperCut Account")
             .setPositiveButton(android.R.string.ok, null)
             .show()
     }

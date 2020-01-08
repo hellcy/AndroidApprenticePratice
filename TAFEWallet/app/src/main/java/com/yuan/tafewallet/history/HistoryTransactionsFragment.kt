@@ -62,7 +62,7 @@ class HistoryTransactionsFragment : Fragment(), HistoryTransactionsTableViewAdap
 
         val view = inflater.inflate(R.layout.fragment_history_transactions, container, false)
         view.AccountNameLabel.text = paperCutAccount.AccountName
-        view.AccountBalanceLabel.text = "$" + "%.2f".format(paperCutAccount.Balance)
+        view.AccountBalanceLabel.text = (activity as MainActivity).convertDollarSign(paperCutAccount.Balance)
 
         view.FromDate.setOnClickListener {
             // create the datePickerFragment

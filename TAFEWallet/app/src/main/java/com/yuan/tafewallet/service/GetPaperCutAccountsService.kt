@@ -12,7 +12,8 @@ import retrofit2.http.Query
 
 interface GetPaperCutAccountsService {
     // 1
-    @POST("/TAFEOnsiteAPIForMobileAndWebPortal/api/TAFEOnsiteAPI/RetrieveAllPapercutAccountsByPapercutUsername")
+    //@POST("/v1/getPaperCutAccount") // preprod
+    @POST("/Prod/getPaperCutAccount") // test
     // 2
     fun getPaperCutAccounts(@Body requestBody: GetPaperCutAccountsRequestBody):
             Call<ArrayList<PaperCutAccount>>
@@ -23,7 +24,8 @@ interface GetPaperCutAccountsService {
             // 5
             val client = OkHttpClient.Builder().addInterceptor(BasicAuthInterceptor("Unicard_API", "1@3$"))
             val retrofit = Retrofit.Builder()
-                .baseUrl("https://idmobile-dev.com.au")
+                //.baseUrl("https://tafenswpayment.identityone-api.com.au") // preprod
+                .baseUrl("https://f3fcdp7la2.execute-api.ap-southeast-2.amazonaws.com") // test
                 .client(client.build())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

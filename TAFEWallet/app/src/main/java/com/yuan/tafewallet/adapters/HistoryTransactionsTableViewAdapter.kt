@@ -34,7 +34,7 @@ class HistoryTransactionsTableViewAdapter(val transactions: ArrayList<Transactio
         val transaction = transactions[transactions.size - position - 1]
         holder.transactionType.text = transaction.Comments!!.split("-")[0]
         holder.transactionTime.text = transaction.TransactionDate
-        holder.transactionAmount.text = "$" + "%.2f".format(transaction.amount)
+        holder.transactionAmount.text = convertDollarSign(transaction.amount)
         holder.itemView.setOnClickListener {
             clickListener.listItemClicked(position)
         }
@@ -43,6 +43,14 @@ class HistoryTransactionsTableViewAdapter(val transactions: ArrayList<Transactio
             holder.itemView.setBackgroundColor(Color.WHITE)
         } else {
             holder.itemView.setBackgroundColor(Color.parseColor("#efeff4"))
+        }
+    }
+
+    fun convertDollarSign(balance: Double): String {
+        if (balance >= 0) {
+            return "$" + "%.2f".format(balance)
+        } else {
+            return "-$" + "%.2f".format(-balance)
         }
     }
 }

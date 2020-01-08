@@ -66,7 +66,7 @@ class RefundFragment : Fragment() {
         primaryAccount = paperCutAccountManager.readPrimaryAccount()
 
         val view = inflater.inflate(R.layout.fragment_refund, container, false)
-        view.AccountBalanceLabel.text = "$" + "%.2f".format(primaryAccount.Balance)
+        view.AccountBalanceLabel.text = (activity as MainActivity).convertDollarSign(primaryAccount.Balance)
         view.AccountNameLabel.text = primaryAccount.AccountName
         view.ErrorMessage.isVisible = false
         view.RefundAmount.setOnFocusChangeListener { view, b ->
@@ -88,7 +88,7 @@ class RefundFragment : Fragment() {
 
     private fun continueButtonPressed(view: View) {
         refundAmount = view.RefundAmount.text.toString().toDoubleOrNull() ?: 0.0
-        if (refundAmount <= 0) {
+        if (refundAmount < 2.5) {
             view.ErrorMessage.text = "Please enter a valid amount"
             view.ErrorMessage.isVisible = true
         } else if (refundAmount > primaryAccount.Balance) {

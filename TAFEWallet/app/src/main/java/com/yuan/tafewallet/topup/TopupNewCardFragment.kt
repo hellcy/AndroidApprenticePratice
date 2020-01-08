@@ -45,7 +45,7 @@ class TopupNewCardFragment : Fragment() {
 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_topup_new_card, container, false)
-        view.AccountBalanceLabel.text = "$" + "%.2f".format(account.Balance)
+        view.AccountBalanceLabel.text = (activity as MainActivity).convertDollarSign(account.Balance)
         view.AccountNameLabel.text = account.AccountName
         view.webView.loadUrl("https://s3-ap-southeast-2.amazonaws.com/paymentapi.westpac.trustedframe/westpacTrustedFrame.html")
         view.webView.settings.javaScriptEnabled = true
